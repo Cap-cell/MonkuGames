@@ -111,6 +111,20 @@ border:2px dashed var(--bd);border-radius:12px;margin-bottom:12px}
 @media(prefers-reduced-motion:reduce){.banner{animation:none}}
 
 .codein{display:inline-flex;align-items:center;gap:6px}.codein input{letter-spacing:3px;font-weight:700;width:150px}.codein .ib{padding:6px 9px}
+@media(max-width:600px){
+ #net .qeg{grid-template-columns:repeat(6,1fr);gap:5px}
+ #net .qeg .c{padding:2px;border-width:2px;border-radius:8px}
+ #net .qeg .c img{border-radius:5px}
+ #net .qeg .c span{font-size:10px;padding-top:1px}
+ #net .secret{padding:6px 8px;gap:10px;margin-bottom:8px}
+ #net .secret .c{width:46px;border-width:2px;padding:2px}
+ #net .secret .q{font-size:24px}
+ #net .secret .bar button{padding:4px 10px}
+ #net .bottom{margin:8px 0}
+ #net .banner{font-size:22px!important;padding:8px 18px!important}
+ h1{font-size:28px;margin:2px 0 8px}
+ #net .bar{margin-bottom:8px}
+}
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>MonkuGames</h1>
@@ -245,7 +259,7 @@ const QE={name:'Qui est-ce ?',icon:'?',bg:'var(--ac2)',sub:'Devine le personnage
   if(over){const t=by2(n.res.theirs);h+=`<p>Personnage de ${esc(op)} : <b>${esc(t?t.name:'?')}</b> · Le tien : <b>${esc(me?me.name:'?')}</b></p>`+(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>')}
   else if(mine&&!n.waiting)h+=`<div class="bar"><button class="go" onclick="QE.end()">Fin de mon tour</button><button class="${n.guessing?'on':''}" onclick="NET.guessing=!NET.guessing;render()">${n.guessing?'Annuler':'Deviner'}</button></div>`;
   h+=`<div class="secret"><div class="c">${n.peek&&me?`<img src="${me.src}" alt=""><span>${esc(me.name)}</span>`:'<div class="q">?</div>'}</div><div><b>Mon personnage secret</b><div class="bar" style="margin:6px 0 0"><button onclick="NET.peek=!NET.peek;render()">${n.peek?'Cacher':'Voir'}</button></div></div></div>`;
-  return h+`<div class="grid ${n.guessing?'guessing':''}">`+ph.map(x=>`<button class="c ${n.down.includes(x.id)?'down':''}" onclick="QE.flip('${x.id}')"><img src="${x.src}" alt=""><span>${esc(x.name)}</span></button>`).join('')+'</div>'},
+  return h+`<div class="grid qeg ${n.guessing?'guessing':''}">`+ph.map(x=>`<button class="c ${n.down.includes(x.id)?'down':''}" onclick="QE.flip('${x.id}')"><img src="${x.src}" alt=""><span>${esc(x.name)}</span></button>`).join('')+'</div>'},
  end(){const n=NET;if(n.phase!=='play'||n.turn!==n.role||n.waiting)return;n.guessing=false;n.turn=n.role==='host'?'join':'host';send({t:'end'});render()},
  flip(id){const n=NET;if(n.guessing&&n.turn===n.role&&!n.waiting){n.guessing=false;n.waiting=true;send({t:'g',id,s:n.secret})}else{const i=n.down.indexOf(id);i<0?n.down.push(id):n.down.splice(i,1)}render()}};
 /* ====== Mode : Touché coulé ====== */
@@ -311,7 +325,7 @@ function render(){
  if(view==='net'&&!NET)view='hub';
  if(!D.cur&&D.decks[0])D.cur=D.decks[0].id;
  const ae=document.activeElement,fid=ae&&ae.id,pos=ae&&ae.selectionStart;
- $('adm').hidden=!admin;$('th').className=view!=='edit'?'on':'';$('th').onclick=()=>go(NET?'net':'hub');$('te').className=view==='edit'?'on':'';
+ const inGame=view==='net';$('adm').hidden=!admin||inGame;$('lock').hidden=inGame;$('th').className=view!=='edit'?'on':'';$('th').onclick=()=>go(NET?'net':'hub');$('te').className=view==='edit'?'on':'';
  $('lock').textContent=admin?'🔓':'🔒';$('lock').setAttribute('aria-label',admin?'Quitter le mode admin':'Mode admin');
  ['hub','mode','jform','net','edit'].forEach(v=>$(v).hidden=view!==v);
  ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit})[view]();
