@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MonkuGames</title>
+<style>
+:root{--bg:#fbf4e2;--fg:#2a1d3a;--card:#fffdf6;--ac:#d6285a;--ac2:#1e5fd4;--down:#cfc6dc;--bd:#e3d6b4;--sea:#d4e4ff;--ship:#5b6b8a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1630;--fg:#f4ecff;--card:#2b2145;--ac:#ff5c8a;--ac2:#7fa8ff;--down:#4a3f68;--bd:#44385f;--sea:#2c3b6b;--ship:#9aa7c7}}
+:root[data-theme="dark"]{--bg:#1d1630;--fg:#f4ecff;--card:#2b2145;--ac:#ff5c8a;--ac2:#7fa8ff;--down:#4a3f68;--bd:#44385f;--sea:#2c3b6b;--ship:#9aa7c7}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:14px 14px 70px}
+h1{font:800 clamp(30px,7vw,48px)/1 "Arial Black","Impact",sans-serif;margin:6px 0 12px;letter-spacing:-1px;color:var(--ac);transform:rotate(-1.5deg)}
+h2{font-size:18px;margin:4px 0 10px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+button,.btn{font:inherit;font-weight:700;border:2px solid var(--fg);background:var(--card);color:var(--fg);padding:8px 14px;border-radius:10px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+button.on{background:var(--fg);color:var(--bg)}
+button.go,.btn.go{background:var(--ac);color:#fff;border-color:var(--ac)}
+.badge{background:var(--ac2);color:#fff;border-radius:20px;padding:4px 12px;font-weight:800;font-size:14px}
+.codebox{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--fg);border-radius:10px;padding:4px 6px;margin-bottom:10px}
+.codebox b{font:800 20px/1 monospace;letter-spacing:4px;min-width:96px;text-align:center}
+.ib{padding:4px 8px;border-width:1px;border-radius:8px}
+.secret{display:flex;align-items:center;gap:12px;background:var(--card);border:2px dashed var(--bd);border-radius:12px;padding:10px;margin-bottom:12px}
+.secret .c{width:72px;flex:none}
+.msg{font-weight:800;font-size:18px;margin:0 0 12px;min-height:1.4em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.menu{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.c{background:var(--card);border:3px solid var(--fg);border-radius:12px;padding:5px;text-align:center;cursor:pointer;position:relative;font:inherit;color:var(--fg)}
+.c img,.q{width:100%;aspect-ratio:1;object-fit:cover;border-radius:7px;display:block}
+.q{background:var(--ac2);color:#fff;display:grid;place-items:center;font:800 40px "Arial Black",sans-serif}
+.c span{display:block;font-weight:700;font-size:14px;padding-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.c small{display:block;font-size:12px;opacity:.7}
+.menu .c:hover{border-color:var(--ac)}
+.c.down{background:var(--down);border-color:var(--down);transform:perspective(300px) rotateX(18deg) scale(.94)}
+.c.down img{filter:grayscale(1) opacity(.25)}
+.c.down span{opacity:.5}
+.guessing .c:hover{border-color:var(--ac)}
+.edit .c{cursor:default}
+input[type=text],input[type=password],select{font:inherit;font-size:15px;padding:7px 9px;border:2px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);min-width:0;max-width:100%}
+.edit input[type=text]{width:100%;font-size:14px;margin-top:3px;padding:3px}
+.x{position:absolute;top:-8px;right:-8px;width:28px;height:28px;padding:0;border-radius:50%;background:var(--ac);color:#fff;border-color:var(--card)}
+.empty{padding:28px 14px;text-align:center;border:2px dashed var(--bd);border-radius:12px;margin-bottom:12px}
+.hint{opacity:.75;font-size:14px;margin:4px 0 10px}
+.box{background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:14px}
+.log{max-height:180px;overflow:auto;margin-bottom:12px}
+.log div{padding:4px 0;border-bottom:1px solid var(--bd)}
+.seas{display:flex;gap:18px;flex-wrap:wrap}
+.seas>div{flex:1 1 280px;max-width:380px}
+.sea{position:relative;display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-width:380px;width:100%}
+.w{aspect-ratio:1;padding:0;border:1px solid var(--bd);border-radius:4px;background:var(--sea);color:var(--fg);font-size:14px;line-height:1}
+.w:disabled{color:var(--fg);opacity:1;cursor:default}
+.w:not(:disabled){cursor:crosshair}
+.w:not(:disabled):hover{background:var(--ac2);opacity:.6}
+.lay{position:absolute;inset:0;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:2px;pointer-events:none}
+.ship{position:relative;margin:3px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.25)}
+.ship.h{background:linear-gradient(180deg,#a9b5d3,#5b6a90 55%,#3a4668);clip-path:polygon(2% 18%,78% 18%,100% 50%,78% 82%,2% 82%)}
+.ship.v{background:linear-gradient(90deg,#a9b5d3,#5b6a90 55%,#3a4668);clip-path:polygon(18% 2%,82% 2%,82% 78%,50% 100%,18% 78%)}
+.ship::after{content:"";position:absolute;background:#e4e9f7;border-radius:3px}
+.ship.h::after{left:28%;top:32%;width:24%;height:36%}
+.ship.v::after{top:28%;left:32%;height:24%;width:36%}
+.drop{animation:drop .9s cubic-bezier(.3,1.5,.5,1) both}
+.sink{animation:sink 2.6s ease-in forwards}
+.wreck{opacity:.22;filter:brightness(.55);transform:translateY(8%) rotate(var(--tilt)) scale(.9)}
+.fire{place-self:center;font-style:normal;font-size:clamp(14px,3.8vw,26px);line-height:1;transform-origin:50% 90%;filter:drop-shadow(0 0 6px #ff9a1f);animation:flame .6s ease-in-out infinite alternate}
+.boom{place-self:center;width:280%;height:280%;border-radius:50%;background:radial-gradient(circle,#fff 0 10%,#ffe066 20%,#ff9a1f 40%,#ff3d00 58%,rgba(255,61,0,0) 72%);animation:boom .8s ease-out both}
+.miss{place-self:center;width:30%;height:30%;border-radius:50%;background:rgba(255,255,255,.9);border:2px solid var(--ac2)}
+.miss.new{animation:splash .7s ease-out both}
+.foam{place-self:center;font-style:normal;font-size:clamp(16px,4vw,28px);animation:foam 2.6s ease-out both}
+@keyframes drop{0%{transform:translateY(-170%) scale(1.35);opacity:0}55%{opacity:1}100%{transform:none;opacity:1}}
+@keyframes sink{0%{transform:none;opacity:1;filter:none}20%{transform:rotate(var(--tilt)) translateY(1%)}100%{transform:translateY(8%) rotate(var(--tilt)) scale(.9);opacity:.22;filter:brightness(.55)}}
+@keyframes flame{from{transform:scale(.82) rotate(-5deg)}to{transform:scale(1.15) rotate(5deg)}}
+@keyframes boom{0%{transform:scale(.1);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.35);opacity:0}}
+@keyframes splash{0%{transform:scale(2.4);opacity:0}30%{opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes foam{0%{opacity:0;transform:scale(.3)}25%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-30%) scale(1.5)}}
+@media(prefers-reduced-motion:reduce){.drop,.sink,.fire,.miss.new,.foam{animation:none!important}.boom{display:none}}
+.lock{position:fixed;right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));width:34px;height:34px;padding:0;border-radius:50%;border-width:1px;opacity:.3;font-size:15px;line-height:1}
+.lock:hover,.lock:focus-visible{opacity:1}
+#modal{position:fixed;inset:0;background:rgba(20,10,40,.6);display:grid;place-items:center;padding:16px;z-index:10}
+.dlg{background:var(--card);border:3px solid var(--fg);border-radius:14px;padding:16px;max-width:340px;width:100%}
+.dlg input{width:100%;margin:6px 0}
+.err{color:var(--ac);font-weight:700;min-height:1.4em;margin:2px 0 6px}
+[hidden]{display:none!important}
+</style></head><body><main>
+<h1>MonkuGames</h1>
+<div class="bar" id="adm" hidden><span class="badge">Mode admin</span><button id="th" onclick="go('hub')">Accueil</button><button id="te" onclick="go('edit')">Gérer les Qui est-ce ?</button></div>
+<section id="hub"></section>
+<section id="mode" hidden></section>
+<section id="jform" hidden></section>
+<section id="net" hidden></section>
+<section id="edit" hidden></section>
+</main>
+<button class="lock" id="lock" onclick="lockClick()" aria-label="Mode admin">🔒</button>
+<div id="modal" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="mt">
+<b id="mt"></b><div class="hint" id="mh"></div>
+<input type="password" id="pw" autocomplete="off" aria-label="Mot de passe" onkeydown="if(event.key==='Enter')submitPw();if(event.key==='Escape')closeModal()">
+<input type="password" id="pw2" autocomplete="off" placeholder="Confirmer le mot de passe" aria-label="Confirmer" onkeydown="if(event.key==='Enter')submitPw();if(event.key==='Escape')closeModal()">
+<div class="err" id="pe" aria-live="polite"></div>
+<div class="bar"><button class="go" onclick="submitPw()">Valider</button><button onclick="closeModal()">Annuler</button></div>
+</div></div>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+const $=s=>document.getElementById(s);
+let D={decks:[],cur:null,pw:null,pseudo:''},loaded=false,admin=false,view='hub',gid=null,NET=null,cd=0;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+/* Stockage : IndexedDB, repli sur localStorage */
+const DB=()=>new Promise((res,rej)=>{const r=indexedDB.open('quiestce',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function idbGet(){const db=await DB();return new Promise((res,rej)=>{const q=db.transaction('kv').objectStore('kv').get('data');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function idbSet(v){const db=await DB();return new Promise((res,rej)=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').put(v,'data');t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function save(){const copy=JSON.parse(JSON.stringify(D));try{await idbSet(copy)}catch(e){try{localStorage.setItem('qe_data',JSON.stringify(copy))}catch(e2){}}}
+async function init(){
+ let d=null;
+ try{d=await idbGet()}catch(e){}
+ if(!d){try{d=JSON.parse(localStorage.getItem('qe_data'))}catch(e){}}
+ if(!d){d={};try{const old=JSON.parse(localStorage.getItem('qe_photos')||'[]');if(old.length){const id=uid();d.decks=[{id,name:'Mes photos',photos:old}];d.cur=id}}catch(e){}}
+ D=Object.assign({decks:[],cur:null,pw:null,pseudo:''},d);
+ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+ loaded=true;render();
+}
+/* Mot de passe admin (verrou simple, stocké sous forme de hash) */
+async function hash(p,s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s+p));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){let h=5381;for(const c of s+p)h=(h*33^c.charCodeAt(0))>>>0;return 'f'+h}}
+function lockClick(){if(admin){admin=false;if(view==='edit')view='hub';render();return}openModal()}
+function openModal(){const first=!D.pw;$('mt').textContent=first?'Crée ton mot de passe admin':'Mode admin';$('mh').textContent=first?'Choisis un mot de passe (4 caractères minimum). Il te sera demandé à chaque passage en mode admin.':'Entre le mot de passe pour modifier les jeux.';$('pw').value='';$('pw2').value='';$('pw2').hidden=!first;$('pe').textContent='';$('modal').hidden=false;$('pw').focus()}
+function closeModal(){$('modal').hidden=true}
+async function submitPw(){const v=$('pw').value;
+ if(!D.pw){if(v.length<4){$('pe').textContent='4 caractères minimum.';return}if(v!==$('pw2').value){$('pe').textContent='Les deux mots de passe sont différents.';return}const salt=uid();D.pw={salt,hash:await hash(v,salt)};await save()}
+ else if(await hash(v,D.pw.salt)!==D.pw.hash){$('pe').textContent='Mot de passe incorrect.';$('pw').select();return}
+ admin=true;view='edit';closeModal();render()}
+async function changePw(){const v=$('np').value;if(v.length<4){$('pm').textContent='4 caractères minimum.';return}const salt=uid();D.pw={salt,hash:await hash(v,salt)};await save();$('np').value='';$('pm').textContent='Mot de passe modifié.'}
+/* ====== Réseau commun à tous les modes (héberger / rejoindre) ====== */
+const CH='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const mkCode=()=>[...Array(5)].map(()=>CH[Math.floor(Math.random()*CH.length)]).join('');
+const send=d=>{const c=NET&&NET.conn;if(c&&c.open){try{c.send(d)}catch(e){}}};
+const PID=c=>'monkugames-'+c.toLowerCase();
+function pickGame(k){gid=k;view='mode';render()}
+function hostGo(){const n=NET={g:gid,role:'host',code:mkCode(),pseudo:D.pseudo||'',phase:'lobby',show:false,opp:null,oppName:'',pr:false,err:'',cp:''};GAMES[gid].init(n);view='net';render();connect(n)}
+function joinGo(){const p=$('jp').value.trim().slice(0,16),c=$('jc').value.trim().toUpperCase();
+ if(!p){$('je').textContent='Le pseudo est obligatoire.';return}
+ if(!/^[A-Z0-9]{5}$/.test(c)){$('je').textContent='Le code est obligatoire : 5 caractères (lettres et chiffres).';return}
+ D.pseudo=p;save();const n=NET={g:gid,role:'join',code:c,pseudo:p,phase:'lobby',opp:null,oppName:'',pr:false,err:'',deck:{name:'',photos:[]},got:{}};view='net';render();connect(n)}
+/* Connexion directe entre les deux navigateurs avec PeerJS (serveur de mise en relation gratuit) */
+function errTxt(e){const t=e&&e.type;return t==='network'||t==='server-error'||t==='socket-error'||t==='socket-closed'?'Connexion au serveur impossible. Vérifie ta connexion internet.':t==='browser-incompatible'?'Ce navigateur ne permet pas le jeu en ligne.':'Problème de connexion ('+(t||'inconnu')+').'}
+function attach(n,c){n.conn=c;
+ c.on('data',d=>{if(NET===n&&n.conn===c)onMsg({peer:c.peer,data:d})});
+ c.on('close',()=>{if(NET===n&&n.conn===c){n.conn=null;lost(n)}});
+ c.on('error',()=>{})}
+function lost(n){const who=n.oppName||(n.role==='host'?'L’autre joueur':'L’hôte');
+ if(n.role==='host'){Object.assign(n,{opp:null,oppName:'',pr:false,phase:'lobby',note:who+' a quitté la partie. En attente d’un autre joueur…'});if(n.g==='bs')n.pr=false}
+ else{clearTimeout(n.tm);Object.assign(n,{opp:null,phase:'lobby',err:who+' a quitté la partie ou la connexion a été perdue.'})}
+ render()}
+function connect(n){
+ if(typeof Peer==='undefined'){n.err='Impossible de charger le module de jeu en ligne. Vérifie ta connexion internet.';render();return}
+ if(n.role==='host'){
+  if(n.peer&&!n.peer.destroyed){if(n.peer.disconnected)try{n.peer.reconnect()}catch(e){}render();return}
+  const p=n.peer=new Peer(PID(n.code));
+  p.on('open',()=>{if(NET!==n)return;n.online=true;n.err='';render()});
+  p.on('connection',c=>{if(NET!==n||n.conn){c.on('open',()=>c.close());return}attach(n,c)});
+  p.on('disconnected',()=>{if(NET===n&&!p.destroyed)setTimeout(()=>{try{p.reconnect()}catch(e){}},1500)});
+  p.on('error',e=>{if(NET!==n)return;if(e.type==='unavailable-id'){p.destroy();n.peer=null;n.code=mkCode();connect(n);return}if(e.type==='peer-unavailable')return;n.err=errTxt(e);render()})}
+ else{
+  const go=()=>{clearTimeout(n.tm);if(n.conn)try{n.conn.close()}catch(e){}const c=n.peer.connect(PID(n.code),{reliable:true,serialization:'json'});attach(n,c);c.on('open',()=>send({t:'hello',n:n.pseudo,g:n.g}));n.tm=setTimeout(()=>{if(NET===n&&!n.opp){n.err='Aucune partie trouvée avec ce code.';render()}},10000)};
+  if(n.peer&&!n.peer.destroyed&&n.peer.open){go();render();return}
+  if(n.peer)try{n.peer.destroy()}catch(e){}
+  const p=n.peer=new Peer();
+  p.on('open',()=>{if(NET===n)go()});
+  p.on('disconnected',()=>{if(NET===n&&!p.destroyed)setTimeout(()=>{try{p.reconnect()}catch(e){}},1500)});
+  p.on('error',e=>{if(NET!==n)return;clearTimeout(n.tm);n.err=e.type==='peer-unavailable'?'Aucune partie trouvée avec ce code.':errTxt(e);render()})}
+ render()}
+function retry(){const n=NET;if(!n)return;n.err='';clearTimeout(n.tm);render();connect(n)}
+function leaveNet(){if(NET){clearTimeout(NET.tm);try{NET.conn&&NET.conn.close()}catch(e){}try{NET.peer&&NET.peer.destroy()}catch(e){}}NET=null;go('hub')}
+function launch(){const n=NET;if(!n||n.role!=='host'||!n.pseudo.trim()||!n.opp||!n.pr)return;n.phase='play';send({t:'start',n:n.pseudo.trim()});GAMES[n.g].begin(n);render()}
+function onMsg(m){const n=NET;if(!n||m.isMe)return;const d=m.data||{},G=GAMES[n.g];
+ if(n.role==='host'&&d.t==='hello'){if(d.g!==n.g||(n.opp&&n.opp!==m.peer))return;n.opp=m.peer;n.note='';n.oppName=String(d.n||'Joueur').slice(0,16);send({t:'welcome'});G.hello&&G.hello(n);render();return}
+ if(n.role==='join'&&!n.opp&&d.t==='welcome'){n.opp=m.peer;clearTimeout(n.tm);render();return}
+ if(m.peer!==n.opp)return;
+ if(d.t==='start'&&n.role==='join'){n.oppName=String(d.n||'Hôte').slice(0,16);n.phase='play';G.begin(n)}
+ else G.msg(n,d);
+ render()}
+function copyCode(){const n=NET,fin=ok=>{n.cp=ok?'Code copié !':'Copie impossible : affiche le code (œil) et note-le.';render();setTimeout(()=>{if(NET===n){n.cp='';render()}},2500)};
+ const fb=()=>{try{const t=document.createElement('textarea');t.value=n.code;document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();fin(ok)}catch(e){fin(false)}};
+ try{navigator.clipboard.writeText(n.code).then(()=>fin(true),fb)}catch(e){fb()}}
+/* ====== Mode : Qui est-ce ? ====== */
+const thumb=src=>new Promise(r=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');c.width=c.height=120;c.getContext('2d').drawImage(i,0,0,120,120);r(c.toDataURL('image/jpeg',.6))};i.onerror=()=>r(src);i.src=src});
+async function sendImg(n,p){n.th=n.th||{};const th=n.th[p.id]||(n.th[p.id]=await thumb(p.src));const k=Math.ceil(th.length/3000);for(let i=0;i<k;i++){send({t:'img',id:p.id,i,n:k,d:th.slice(i*3000,(i+1)*3000)});await sleep(45)}}
+async function sendDeck(n){const tok=n.tok=(n.tok||0)+1;send({t:'deck',name:n.deck.name,list:n.deck.photos.map(p=>({id:p.id,name:p.name}))});await sleep(100);for(const p of n.deck.photos){if(NET!==n||n.tok!==tok)return;await sendImg(n,p)}}
+function needImgs(){const n=NET;if(!n||n.phase!=='lobby')return;const miss=n.deck.photos.filter(p=>!p.src);if(!miss.length)return;if(++n.tries>4){n.err='Chargement des photos incomplet. Quitte puis rejoins à nouveau.';render();return}miss.slice(0,20).forEach(p=>{delete n.got[p.id];send({t:'need',id:p.id})});n.tm=setTimeout(needImgs,10000)}
+function gotImg(n,d){const p=n.deck.photos.find(x=>x.id===d.id);if(!p||p.src)return;const g=n.got[d.id]||(n.got[d.id]={});g[d.i]=String(d.d);
+ if(Object.keys(g).length===d.n){const s=[...Array(d.n).keys()].map(i=>g[i]).join('');if(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(s))p.src=s;else delete n.got[d.id]}
+ if(n.deck.photos.length&&n.deck.photos.every(x=>x.src)&&!n.pr){clearTimeout(n.tm);n.pr=true;send({t:'ready'})}}
+function resetRound(n){Object.assign(n,{log:[],down:[],res:null,peek:false,waiting:false,toAnswer:false,guessing:false,draft:'',turn:'host'})}
+const QE={name:'Qui est-ce ?',icon:'?',bg:'var(--ac2)',sub:'Devine le personnage de l’autre',
+ okDecks:()=>D.decks.filter(d=>d.photos.length>=2),
+ init(n){const ok=QE.okDecks();n.deckId=(ok.find(d=>d.id===D.cur)||ok[0]||{}).id||null;n.th={};QE.sync(n)},
+ sync(n){const d=D.decks.find(x=>x.id===n.deckId);n.deck=d?{name:d.name,photos:d.photos}:{name:'',photos:[]};n.pr=false;if(n.opp)sendDeck(n)},
+ setDeck(id){NET.deckId=id;QE.sync(NET);render()},
+ opts(n){const ok=QE.okDecks();return ok.length?`<label for="dsel"><b>Catégorie</b></label><br><select id="dsel" onchange="QE.setDeck(this.value)">${ok.map(d=>`<option value="${d.id}" ${d.id===n.deckId?'selected':''}>${esc(d.name)} (${d.photos.length} photos)</option>`).join('')}</select>`:'<p class="hint">Aucune catégorie avec au moins 2 photos. Crée-en une en mode admin (cadenas en bas à droite).</p>'},
+ hello(n){if(n.deck.photos.length)sendDeck(n)},
+ begin(n){resetRound(n);const p=n.deck.photos;n.secret=p[Math.floor(Math.random()*p.length)].id},
+ msg(n,d){switch(d.t){
+  case 'deck':if(n.role==='join'){n.deck={name:String(d.name||'').slice(0,24),photos:(d.list||[]).slice(0,100).map(p=>({id:String(p.id),name:String(p.name||'').slice(0,24),src:''}))};n.got={};n.pr=false;clearTimeout(n.tm);n.tries=0;n.tm=setTimeout(needImgs,10000)}break;
+  case 'img':if(n.role==='join')gotImg(n,d);break;
+  case 'need':{const p=n.deck.photos.find(x=>x.id===d.id);if(p)sendImg(n,p)}break;
+  case 'ready':if(n.role==='host')n.pr=true;break;
+  case 'q':n.log.push({w:'opp',x:String(d.x||'').slice(0,140),a:null});n.toAnswer=true;break;
+  case 'a':{const l=[...n.log].reverse().find(e=>e.w==='me'&&e.a===null);if(l)l.a=!!d.v;n.waiting=false;n.turn=n.role==='host'?'join':'host'}break;
+  case 'g':{if(n.phase!=='play'||n.turn===n.role)break;const ok=d.id===n.secret;send({t:'r',ok,s:n.secret});n.phase='over';n.res={won:!ok,theirs:d.s}}break;
+  case 'r':n.phase='over';n.waiting=false;n.res={won:!!d.ok,theirs:d.s};break}},
+ ui(n){const ph=n.deck.photos,host=n.role==='host',by2=id=>ph.find(p=>p.id===id),me=by2(n.secret),mine=n.turn===n.role,over=n.phase==='over',op=n.oppName||'Adversaire';
+  const st=over?(n.res.won?'Tu as gagné !':'Tu as perdu…'):n.toAnswer?'Réponds à la question de '+op+'.':n.waiting?'En attente de '+op+'…':mine?'À toi : pose une question ou devine.':op+' réfléchit…';
+  let h=`<p class="msg" aria-live="polite">${esc(st)}</p>`;
+  if(over){const t=by2(n.res.theirs);h+=`<p>Personnage de ${esc(op)} : <b>${esc(t?t.name:'?')}</b> · Le tien : <b>${esc(me?me.name:'?')}</b></p>`+(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>')}
+  else if(n.toAnswer){const q=[...n.log].reverse().find(e=>e.w==='opp');h+=`<div class="box"><b>${esc(q?q.x:'')}</b><div class="bar" style="margin-top:8px"><button class="go" onclick="QE.answer(true)">Oui</button><button onclick="QE.answer(false)">Non</button></div></div>`}
+  else if(mine&&!n.waiting)h+=`<div class="bar"><input id="qi" type="text" maxlength="140" placeholder="Ta question (réponse oui ou non)" value="${esc(n.draft||'')}" oninput="NET.draft=this.value" onkeydown="if(event.key==='Enter')QE.ask()" style="flex:1 1 200px"><button class="go" onclick="QE.ask()">Demander</button><button class="${n.guessing?'on':''}" onclick="NET.guessing=!NET.guessing;render()">${n.guessing?'Choisis une carte…':'Deviner'}</button></div>`;
+  h+=`<div class="secret"><div class="c">${n.peek&&me?`<img src="${me.src}" alt=""><span>${esc(me.name)}</span>`:'<div class="q">?</div>'}</div><div><b>Mon personnage secret</b><div class="bar" style="margin:6px 0 0"><button onclick="NET.peek=!NET.peek;render()">${n.peek?'Cacher':'Voir'}</button></div></div></div>`;
+  if(n.log.length)h+='<div class="log">'+n.log.map(e=>`<div><b>${esc(e.w==='me'?n.pseudo:op)}</b> : ${esc(e.x)} → ${e.a===null?'…':e.a?'Oui':'Non'}</div>`).join('')+'</div>';
+  return h+`<div class="grid ${n.guessing?'guessing':''}">`+ph.map(x=>`<button class="c ${n.down.includes(x.id)?'down':''}" onclick="QE.flip('${x.id}')"><img src="${x.src}" alt=""><span>${esc(x.name)}</span></button>`).join('')+'</div>'},
+ ask(){const n=NET,v=($('qi').value||'').trim().slice(0,140);if(!v||n.turn!==n.role||n.waiting)return;n.log.push({w:'me',x:v,a:null});n.waiting=true;n.draft='';send({t:'q',x:v});render()},
+ answer(v){const n=NET;if(!n.toAnswer)return;send({t:'a',v});const l=[...n.log].reverse().find(e=>e.w==='opp'&&e.a===null);if(l)l.a=v;n.toAnswer=false;n.turn=n.role;render()},
+ flip(id){const n=NET;if(n.guessing&&n.turn===n.role&&!n.waiting){n.guessing=false;n.waiting=true;send({t:'g',id,s:n.secret})}else{const i=n.down.indexOf(id);i<0?n.down.push(id):n.down.splice(i,1)}render()}};
+/* ====== Mode : Touché coulé ====== */
+const SZ=[5,4,3,3,2];
+function place(){const occ=new Set(),ships=[];for(const n of SZ){for(;;){const h=Math.random()<.5,r=Math.floor(Math.random()*10),c=Math.floor(Math.random()*10);if((h?c:r)+n>10)continue;const cells=[...Array(n)].map((_,i)=>h?r*10+c+i:(r+i)*10+c);if(cells.some(x=>occ.has(x)))continue;cells.forEach(x=>occ.add(x));ships.push(cells);break}}return ships}
+const TXT=['À l’eau','Touché','Coulé'];
+const BS={name:'Touché coulé',icon:'⚓',bg:'var(--ac)',sub:'Bataille navale à deux',
+ init(n){n.pr=false},
+ opts:()=>'<p class="hint">Chaque joueur reçoit une flotte placée au hasard.</p>',
+ hello(n){n.pr=true},
+ begin(n){n.my={ships:place(),shots:Array(100).fill(0)};n.en={shots:Array(100).fill(0),ns:0,sunkShips:[]};n.fx={};n.pid=(n.pid||0)+1;n.bp='place';n.mr=false;n.or=false;n.wait=false;n.msg='';n.turn='host';n.res=null;if(!admin)BS.ready(n)},
+ ready(n){n.mr=true;send({t:'rdy'});BS.chk(n)},
+ chk(n){if(n.mr&&n.or&&n.bp==='place'){n.bp='play';n.turn='host'}},
+ shuffle(){NET.my.ships=place();NET.pid++;NET.fx={};render()},
+ shoot(i){const n=NET;if(n.bp!=='play'||n.turn!==n.role||n.wait||n.en.shots[i])return;n.wait=true;send({t:'s',i});render()},
+ msg(n,d){
+  if(d.t==='rdy'){n.or=true;BS.chk(n)}
+  else if(d.t==='s'){const i=d.i;if(n.bp!=='play'||n.turn===n.role||!Number.isInteger(i)||i<0||i>99||n.my.shots[i])return;
+   const m=n.my,s=m.ships.find(x=>x.includes(i));m.shots[i]=s?2:1;const sunk=!!s&&s.every(c=>m.shots[c]===2),r=!s?0:sunk?2:1,w=m.ships.every(x=>x.every(c=>m.shots[c]===2));
+   send({t:'sr',i,r,c:sunk?s:[],w});n.msg=n.oppName+' : '+TXT[r];if(w){n.phase='over';n.res={won:false}}else n.turn=n.role}
+  else if(d.t==='sr'){const i=d.i;if(!n.wait||!Number.isInteger(i)||i<0||i>99)return;n.wait=false;n.en.shots[i]=d.r?2:1;
+   if(d.r===2){n.en.ns++;const c=(Array.isArray(d.c)?d.c:[]).filter(x=>Number.isInteger(x)&&x>=0&&x<100).slice(0,5).sort((a,b)=>a-b);if(c.length>=2)n.en.sunkShips.push(c)}
+   n.msg='Toi : '+TXT[d.r===1||d.r===2?d.r:0];if(d.w){n.phase='over';n.res={won:true}}else n.turn=n.role==='host'?'join':'host'}},
+ fx(n,key,dur){n.fx=n.fx||{};const t=n.fx[key]||(n.fx[key]=Date.now()),e=Date.now()-t;return e<dur?e:-1},
+ grid(n,mine){const side=mine?n.my:n.en,shots=side.shots,pre=mine?'m':'e',ships=mine?n.my.ships:n.en.sunkShips,isSunk=s=>s.every(c=>shots[c]===2),sunkCells=new Set(ships.filter(isSunk).flat());
+  let h='<div class="sea">',foam='';
+  for(let i=0;i<100;i++){const ok=!mine&&n.bp==='play'&&n.phase==='play'&&n.turn===n.role&&!n.wait&&!shots[i];h+=`<button class="w" ${ok?`onclick="BS.shoot(${i})"`:'disabled'} aria-label="Case ${'ABCDEFGHIJ'[Math.floor(i/10)]}${i%10+1}"></button>`}
+  h+='<div class="lay">';
+  ships.forEach((s,k)=>{const v=s[1]-s[0]!==1,r=Math.floor(s[0]/10),c=s[0]%10,pos=v?`grid-column:${c+1};grid-row:${r+1}/span ${s.length}`:`grid-row:${r+1};grid-column:${c+1}/span ${s.length}`;
+   let cls='',st=pos+`;--tilt:${s[0]%2?'-10deg':'9deg'}`;
+   if(isSunk(s)){const e=BS.fx(n,pre+'s'+s[0],2600);if(e>=0){cls=' sink';st+=`;animation-delay:${-e}ms`;foam+=`<i class="foam" style="${pos};animation-delay:${-e}ms">🌊</i>`}else cls=' wreck'}
+   else if(mine){const d=k*230,e=BS.fx(n,'p'+(n.pid||0)+'-'+k,d+1000);if(e>=0){cls=' drop';st+=`;animation-delay:${d-e}ms`}}
+   h+=`<div class="ship ${v?'v':'h'}${cls}" style="${st}"></div>`});
+  h+='</div><div class="lay">';
+  for(let i=0;i<100;i++){const s=shots[i];if(!s)continue;const pos=`grid-row:${Math.floor(i/10)+1};grid-column:${i%10+1}`;
+   if(s===1){const e=BS.fx(n,pre+'m'+i,700);h+=`<i class="miss${e>=0?' new':''}" style="${pos}${e>=0?`;animation-delay:${-e}ms`:''}"></i>`}
+   else{if(!sunkCells.has(i))h+=`<i class="fire" style="${pos};animation-delay:${-(Date.now()%900)}ms">🔥</i>`;const e=BS.fx(n,pre+'h'+i,800);if(e>=0)h+=`<i class="boom" style="${pos};animation-delay:${-e}ms"></i>`}}
+  return h+foam+'</div></div>'},
+ ui(n){const op=n.oppName||'Adversaire',over=n.phase==='over',host=n.role==='host';
+  const left=5-n.en.ns,mine=5-n.my.ships.filter(s=>s.every(c=>n.my.shots[c]===2)).length;
+  if(n.bp==='place'){const wait=n.mr;return `<p class="msg">${wait?'En attente de '+esc(op)+'…':'Place ta flotte, puis clique sur Prêt.'}</p>`+(wait?'':'<div class="bar"><button onclick="BS.shuffle()">Mélanger mes bateaux</button><button class="go" onclick="BS.ready(NET);render()">Prêt</button></div>')+BS.grid(n,true)}
+  const st=over?(n.res.won?'Victoire ! Tu as coulé toute la flotte.':'Défaite… '+op+' a coulé ta flotte.'):n.turn===n.role?'À toi de tirer !':op+' vise…';
+  return `<p class="msg" aria-live="polite">${esc(st)}</p><p class="hint">${esc(n.msg||'')}</p>`+(over?(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>'):'')+
+  `<div class="seas"><div><h2>Flotte de ${esc(op)} (${left} bateaux) : tire ici</h2>${BS.grid(n,false)}</div><div><h2>Ma flotte (${mine} bateaux)</h2>${BS.grid(n,true)}</div></div>`}};
+/* Pour ajouter un futur mode : créer un objet comme QE ou BS (init, opts, hello, begin, msg, ui) et l'ajouter ici */
+const GAMES={qe:QE,bs:BS};
+/* ====== Admin (gestion des Qui est-ce ?) ====== */
+function shrink(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=240,c=document.createElement('canvas'),m=Math.min(i.width,i.height);c.width=c.height=s;c.getContext('2d').drawImage(i,(i.width-m)/2,(i.height-m)/2,m,m,0,0,s,s);res(c.toDataURL('image/jpeg',.8))};i.onerror=()=>res(null);i.src=r.result};r.readAsDataURL(file)})}
+function addDeck(){const n=$('nn').value.trim()||'Jeu '+(D.decks.length+1);const id=uid();D.decks.push({id,name:n.slice(0,24),photos:[]});D.cur=id;save();render()}
+function delDeck(){if(!cd){cd=1;render();return}const id=D.cur;D.decks=D.decks.filter(d=>d.id!==id);D.cur=D.decks[0]?D.decks[0].id:null;cd=0;save();render()}
+async function addPhotos(inp){const dk=D.decks.find(d=>d.id===D.cur);if(!dk)return;for(const f of [...inp.files]){const src=await shrink(f);if(src)dk.photos.push({id:uid(),name:f.name.replace(/\.[^.]+$/,'').slice(0,24),src})}inp.value='';await save();render()}
+function delPhoto(id){const dk=D.decks.find(d=>d.id===D.cur);dk.photos=dk.photos.filter(p=>p.id!==id);save();render()}
+function renPhoto(id,v){D.decks.find(d=>d.id===D.cur).photos.find(p=>p.id===id).name=v.slice(0,24);save()}
+function renDeck(v){const dk=D.decks.find(d=>d.id===D.cur);dk.name=v.trim().slice(0,24)||dk.name;save();render()}
+/* ====== Affichage ====== */
+function go(v){view=v;cd=0;render()}
+function render(){
+ if(!loaded)return;
+ if(view==='edit'&&!admin)view='hub';
+ if((view==='mode'||view==='jform')&&!gid)view='hub';
+ if(view==='net'&&!NET)view='hub';
+ if(!D.cur&&D.decks[0])D.cur=D.decks[0].id;
+ const ae=document.activeElement,fid=ae&&ae.id,pos=ae&&ae.selectionStart;
+ $('adm').hidden=!admin;$('th').className=view!=='edit'?'on':'';$('te').className=view==='edit'?'on':'';
+ $('lock').textContent=admin?'🔓':'🔒';$('lock').setAttribute('aria-label',admin?'Quitter le mode admin':'Mode admin');
+ ['hub','mode','jform','net','edit'].forEach(v=>$(v).hidden=view!==v);
+ ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit})[view]();
+ if(fid&&fid!=='lock'&&$(fid)&&$(fid).focus&&view!=='edit'){$(fid).focus();try{$(fid).setSelectionRange(pos,pos)}catch(e){}}
+}
+function renderHub(){
+ $('hub').innerHTML='<h2>À quoi on joue ?</h2><div class="grid menu">'+Object.entries(GAMES).map(([k,g])=>`<button class="c" onclick="pickGame('${k}')"><div class="q" style="background:${g.bg}">${g.icon}</div><span>${esc(g.name)}</span><small>${esc(g.sub)}</small></button>`).join('')+'</div>';
+}
+function renderMode(){const G=GAMES[gid];
+ $('mode').innerHTML=`<div class="bar"><button onclick="go('hub')">← MonkuGames</button></div><h2>${esc(G.name)}</h2><div class="grid menu"><button class="c" onclick="hostGo()"><div class="q">🏠</div><span>Héberger</span><small>Crée une partie et reçois un code</small></button><button class="c" onclick="go('jform')"><div class="q" style="background:var(--ac)">🔑</div><span>Rejoindre</span><small>Entre le code de l’hôte</small></button></div>`;
+}
+function renderJform(){const G=GAMES[gid];
+ $('jform').innerHTML=`<div class="bar"><button onclick="go('mode')">← Retour</button><b>${esc(G.name)}</b></div><div class="box"><h2>Rejoindre une partie</h2><label for="jp"><b>Pseudo</b> (obligatoire)</label><br><input id="jp" type="text" maxlength="16" value="${esc(D.pseudo||'')}" autocomplete="off" required><br><br><label for="jc"><b>Code de la partie</b> (obligatoire)</label><br><input id="jc" type="text" maxlength="5" autocomplete="off" required style="text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGo()"><div class="err" id="je" aria-live="polite"></div><button class="go" onclick="joinGo()">Jouer</button></div>`;
+}
+function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
+ if(host&&n.online)h+=`<div class="codebox"><b>${n.show?esc(n.code):'•••••'}</b><button class="ib" onclick="NET.show=!NET.show;render()" aria-label="${n.show?'Masquer':'Afficher'} le code" title="${n.show?'Masquer':'Afficher'} le code">${n.show?'🙈':'👁️'}</button><button class="ib" onclick="copyCode()" aria-label="Copier le code" title="Copier le code">📋</button></div>${n.cp?`<span class="hint"> ${esc(n.cp)}</span>`:''}`;
+ h+=`<div class="bar"><button onclick="leaveNet()">← Quitter</button><b>${esc(G.name)}</b></div>`;
+ if(n.err)h+=`<div class="empty"><b>${esc(n.err)}</b><div class="bar" style="justify-content:center;margin:10px 0 0"><button onclick="retry()">Réessayer</button></div></div>`;
+ if(n.phase==='lobby'){
+  if(host){const can=n.pseudo.trim()&&n.opp&&n.pr;
+   h+=`<div class="box"><label for="ps"><b>Ton pseudo</b></label><br><input id="ps" type="text" maxlength="16" placeholder="Ton pseudo" value="${esc(n.pseudo)}" autocomplete="off" oninput="NET.pseudo=this.value;render()" onchange="D.pseudo=this.value.trim();save()">`+(G.opts(n)?'<div style="margin-top:10px">'+G.opts(n)+'</div>':'')+'</div>'+
+   (n.err?'':`<div class="empty">${n.opp?`<b>${esc(n.oppName)}</b> a rejoint la partie.`+(n.pr?'':'<br>Envoi des données…'):!n.online?'Création de la partie…':esc(n.note||'En attente de l’autre joueur…')}</div>`)+`<div class="bar"><button class="go" onclick="launch()" ${can?'':'disabled'}>Lancer la partie</button></div>`+(n.opp&&!n.pseudo.trim()?'<p class="hint">Entre ton pseudo pour pouvoir lancer.</p>':'')}
+  else{const ph=n.deck.photos,ok=ph.filter(p=>p.src).length;
+   if(!n.err)h+=`<div class="empty">${!n.opp?'Connexion à la partie…':ph.length&&ok<ph.length?`Chargement des photos (${ok}/${ph.length})…`:'Connecté. En attente du lancement par l’hôte…'}</div>`}}
+ else h+=G.ui(n);
+ $('net').innerHTML=h}
+function renderEdit(){
+ const dk=D.decks.find(d=>d.id===D.cur);
+ let h='<h2>Mes Qui est-ce ?</h2><div class="bar">'+D.decks.map(d=>`<button class="${d.id===D.cur?'on':''}" onclick="D.cur='${d.id}';cd=0;save();render()">${esc(d.name)}</button>`).join('')+'</div>';
+ h+='<div class="bar"><input id="nn" type="text" maxlength="24" placeholder="Nouveau jeu (ex : Famille)" onkeydown="if(event.key===\'Enter\')addDeck()"><button class="go" onclick="addDeck()">Créer le jeu</button></div>';
+ if(!dk){h+='<div class="empty">Crée ton premier jeu, puis ajoute-lui des personnages.</div>'}
+ else{h+=`<div class="box"><div class="bar"><input id="rn" type="text" maxlength="24" value="${esc(dk.name)}" aria-label="Nom du jeu" onchange="renDeck(this.value)"><label class="btn go">Ajouter des photos<input type="file" accept="image/*" multiple hidden onchange="addPhotos(this)"></label><button onclick="delDeck()">${cd?'Confirmer la suppression ?':'Supprimer le jeu'}</button></div>
+ <p class="hint">Chaque photo est un personnage. Touche un nom pour le modifier. Tout est enregistré automatiquement sur cet appareil.</p>
+ <div class="grid edit">`+(dk.photos.length?dk.photos.map(p=>`<div class="c"><button class="x" aria-label="Supprimer ${esc(p.name)}" onclick="delPhoto('${p.id}')">×</button><img src="${p.src}" alt=""><input type="text" value="${esc(p.name)}" aria-label="Nom" onchange="renPhoto('${p.id}',this.value)"></div>`).join(''):'<div class="empty" style="grid-column:1/-1">Ce jeu est vide. Ajoute des photos.</div>')+'</div></div>'}
+ h+='<div class="box"><h2>Mot de passe admin</h2><div class="bar"><input id="np" type="password" autocomplete="off" placeholder="Nouveau mot de passe" aria-label="Nouveau mot de passe"><button onclick="changePw()">Changer</button></div><div class="hint" id="pm" aria-live="polite"></div></div>';
+ $('edit').innerHTML=h;
+}
+init();
+</script></body></html>
