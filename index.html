@@ -9,7 +9,7 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
-main{max-width:980px;margin:0 auto;padding:14px 14px 70px}
+main{max-width:1240px;margin:0 auto;padding:14px 14px 70px}
 h1{font:800 clamp(30px,7vw,48px)/1 "Arial Black","Impact",sans-serif;margin:6px 0 12px;letter-spacing:-1px;color:var(--ac);transform:rotate(-1.5deg)}
 h2{font-size:18px;margin:4px 0 10px}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
@@ -46,23 +46,26 @@ input[type=text],input[type=password],select{font:inherit;font-size:15px;padding
 .box{background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:14px}
 .log{max-height:180px;overflow:auto;margin-bottom:12px}
 .log div{padding:4px 0;border-bottom:1px solid var(--bd)}
-.seas{display:flex;gap:18px;flex-wrap:wrap}
-.seas>div{flex:1 1 280px;max-width:380px}
-.sea{position:relative;display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-width:380px;width:100%}
+.bsw{text-align:center}.bsw .bar{justify-content:center}
+.seas{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
+.seas>div{flex:0 1 540px;max-width:max(280px,min(540px,calc(100vh - 380px)))}
+.sea{position:relative;display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:max(280px,min(540px,calc(100vh - 380px)));width:100%;margin:0 auto}
 .w{aspect-ratio:1;padding:0;border:1px solid var(--bd);border-radius:4px;background:var(--sea);color:var(--fg);font-size:14px;line-height:1}
 .w:disabled{color:var(--fg);opacity:1;cursor:default}
 .w:not(:disabled){cursor:crosshair}
 .w:not(:disabled):hover{background:var(--ac2);opacity:.6}
 .lay{position:absolute;inset:0;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:2px;pointer-events:none}
 .ship{position:relative;margin:3px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.25)}
+.drown{place-self:stretch;margin:3px;--w:color-mix(in srgb,var(--sea) 78%,transparent);animation:drown 3.4s linear both;animation-delay:var(--d,0ms)}
+.drown.h{clip-path:polygon(2% 18%,78% 18%,100% 50%,78% 82%,2% 82%);background:linear-gradient(to right,transparent 50%,var(--w) 50%);background-size:200% 100%}
+.drown.v{clip-path:polygon(18% 2%,82% 2%,82% 78%,50% 100%,18% 78%);background:linear-gradient(to bottom,transparent 50%,var(--w) 50%);background-size:100% 200%}
+@keyframes drown{0%,30%{background-position:0 0;opacity:1}92%{background-position:100% 100%;opacity:1}100%{background-position:100% 100%;opacity:0}}
 .ship.h{background:linear-gradient(180deg,#a9b5d3,#5b6a90 55%,#3a4668);clip-path:polygon(2% 18%,78% 18%,100% 50%,78% 82%,2% 82%)}
 .ship.v{background:linear-gradient(90deg,#a9b5d3,#5b6a90 55%,#3a4668);clip-path:polygon(18% 2%,82% 2%,82% 78%,50% 100%,18% 78%)}
 .ship::after{content:"";position:absolute;background:#e4e9f7;border-radius:3px}
 .ship.h::after{left:28%;top:32%;width:24%;height:36%}
 .ship.v::after{top:28%;left:32%;height:24%;width:36%}
 .drop{animation:drop .9s cubic-bezier(.3,1.5,.5,1) both}
-.ship.h{transform-origin:12% 50%;--dive:perspective(260px) rotateY(55deg) scale(.85)}
-.ship.v{transform-origin:50% 12%;--dive:perspective(260px) rotateX(-55deg) scale(.85)}
 .sink{animation:sink 3.4s ease-in both;animation-delay:var(--d,0ms)}
 .xboom{place-self:center;width:120%;height:320%;border-radius:50%;background:radial-gradient(ellipse,#fff 0 8%,#ffe066 18%,#ff9a1f 38%,#ff3d00 55%,rgba(255,61,0,0) 70%);animation:xboom 1s ease-out both;animation-delay:var(--d,0ms)}
 .smoke{place-self:stretch;position:relative}
@@ -72,32 +75,34 @@ input[type=text],input[type=password],select{font:inherit;font-size:15px;padding
 @keyframes xboom{0%{transform:scale(.1);opacity:1}45%{transform:scale(1);opacity:.95}100%{transform:scale(1.3);opacity:0}}
 @keyframes smoke{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:.95}100%{opacity:0;transform:translateY(-150%) scale(1.7)}}
 @keyframes bubbles{0%,45%{opacity:0;transform:translateY(25%)}62%{opacity:1}100%{opacity:0;transform:translateY(-30%)}}
-.wreck{opacity:.25;transform:var(--dive);filter:brightness(.55) sepia(.6)}
+.wreck{opacity:.25;filter:brightness(.7) sepia(.5)}
 .fire{place-self:center;font-style:normal;font-size:clamp(14px,3.8vw,26px);line-height:1;transform-origin:50% 90%;filter:drop-shadow(0 0 6px #ff9a1f);animation:flame .6s ease-in-out infinite alternate}
 .boom{place-self:center;width:280%;height:280%;border-radius:50%;background:radial-gradient(circle,#fff 0 10%,#ffe066 20%,#ff9a1f 40%,#ff3d00 58%,rgba(255,61,0,0) 72%);animation:boom .8s ease-out both}
 .miss{place-self:center;width:30%;height:30%;border-radius:50%;background:rgba(255,255,255,.9);border:2px solid var(--ac2)}
 .miss.new{animation:splash .7s ease-out both}
 .foam{place-self:center;font-style:normal;font-size:clamp(16px,4vw,28px);animation:foam 2.6s ease-out both}
 @keyframes drop{0%{transform:translateY(-170%) scale(1.35);opacity:0}55%{opacity:1}100%{transform:none;opacity:1}}
-@keyframes sink{0%{transform:none;opacity:1;filter:brightness(2.4) saturate(.3)}4%{transform:translate(4%,-3%)}8%{transform:translate(-4%,3%)}12%{transform:translate(3%,2%);filter:brightness(1.5)}16%{transform:translate(-2%,-1%)}30%{transform:none;filter:brightness(.55) sepia(.6);opacity:1}100%{transform:var(--dive);filter:brightness(.55) sepia(.6);opacity:.25}}
+@keyframes sink{0%{transform:none;opacity:1;filter:brightness(2.4) saturate(.3)}4%{transform:translate(4%,-3%)}8%{transform:translate(-4%,3%)}12%{transform:translate(3%,2%);filter:brightness(1.5)}16%{transform:translate(-2%,-1%)}30%{transform:none;filter:brightness(.7) sepia(.5);opacity:1}94%{opacity:1}100%{transform:none;filter:brightness(.7) sepia(.5);opacity:.25}}
 @keyframes flame{from{transform:scale(.82) rotate(-5deg)}to{transform:scale(1.15) rotate(5deg)}}
 @keyframes boom{0%{transform:scale(.1);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.35);opacity:0}}
 @keyframes splash{0%{transform:scale(2.4);opacity:0}30%{opacity:1}100%{transform:scale(1);opacity:1}}
 @keyframes foam{0%{opacity:0;transform:scale(.3)}25%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-30%) scale(1.5)}}
-@media(prefers-reduced-motion:reduce){.xboom,.smoke,.bubbles{display:none}.drop,.sink,.fire,.miss.new,.foam{animation:none!important}.boom{display:none}}
+@media(prefers-reduced-motion:reduce){.xboom,.smoke,.bubbles,.drown{display:none}.drop,.sink,.fire,.miss.new,.foam{animation:none!important}.boom{display:none}}
 .lock{position:fixed;right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));width:34px;height:34px;padding:0;border-radius:50%;border-width:1px;opacity:.3;font-size:15px;line-height:1}
 .lock:hover,.lock:focus-visible{opacity:1}
 #modal{position:fixed;inset:0;background:rgba(20,10,40,.6);display:grid;place-items:center;padding:16px;z-index:10}
 .dlg{background:var(--card);border:3px solid var(--fg);border-radius:14px;padding:16px;max-width:340px;width:100%}
 .dlg input{width:100%;margin:6px 0}
 .err{color:var(--ac);font-weight:700;min-height:1.4em;margin:2px 0 6px}
-.banner{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:5;pointer-events:none;text-align:center;white-space:nowrap;font:900 clamp(22px,5vw,36px)/1.1 "Arial Black","Impact",sans-serif;padding:14px 26px;border-radius:16px;border:3px solid var(--fg);box-shadow:0 8px 24px rgba(0,0,0,.35);animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
-.banner.turn{background:var(--ac2);color:#fff;font-size:clamp(18px,4vw,26px);padding:10px 22px}
-.banner.win{background:#1fa463;color:#fff;font-size:clamp(34px,9vw,64px);padding:18px 34px}
-.banner.lose{background:var(--ac);color:#fff;font-size:clamp(34px,9vw,64px);padding:18px 34px}
-@keyframes pop{0%{transform:translateX(-50%) scale(.4);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
+.bwrap{display:flex;justify-content:center;margin:22px 0 10px}
+.banner{display:inline-block;max-width:100%;text-align:center;font:900 clamp(22px,5vw,36px)/1.1 "Arial Black","Impact",sans-serif;padding:14px 26px;border-radius:16px;border:3px solid var(--fg);box-shadow:0 8px 24px rgba(0,0,0,.35);animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
+.banner.turn{background:var(--ac2);color:#fff;font-size:clamp(24px,5vw,40px);padding:12px 26px}
+.banner.win{background:#1fa463;color:#fff;font-size:clamp(24px,5vw,40px);padding:12px 26px}
+.banner.lose{background:var(--ac);color:#fff;font-size:clamp(24px,5vw,40px);padding:12px 26px}
+@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.banner.nopop{animation:none}
 @media(prefers-reduced-motion:reduce){.banner{animation:none}}
-main{padding-bottom:140px}
+
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>MonkuGames</h1>
@@ -108,7 +113,6 @@ main{padding-bottom:140px}
 <section id="net" hidden></section>
 <section id="edit" hidden></section>
 </main>
-<div id="banner" class="banner" hidden aria-live="polite"></div>
 <button class="lock" id="lock" onclick="lockClick()" aria-label="Mode admin">🔒</button>
 <div id="modal" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="mt">
 <b id="mt"></b><div class="hint" id="mh"></div>
@@ -264,7 +268,7 @@ const BS={name:'Touché coulé',icon:'⚓',bg:'var(--ac)',sub:'Bataille navale �
   h+='<div class="lay">';
   ships.forEach((s,k)=>{const v=s[1]-s[0]!==1,r=Math.floor(s[0]/10),c=s[0]%10,pos=v?`grid-column:${c+1};grid-row:${r+1}/span ${s.length}`:`grid-row:${r+1};grid-column:${c+1}/span ${s.length}`;
    let cls='',st=pos+`;--tilt:${s[0]%2?'-10deg':'9deg'}`;
-   if(isSunk(s)){const e=BS.fx(n,pre+'s'+s[0],3400);if(e>=0){const dv=`;--d:${-e}ms`;cls=' sink';st+=dv;foam+=`<i class="xboom" style="${pos}${dv}"></i><i class="smoke" style="${pos}${dv}"></i><i class="bubbles" style="${pos}${dv}"></i>`}else cls=' wreck'}
+   if(isSunk(s)){const e=BS.fx(n,pre+'s'+s[0],3400);if(e>=0){const dv=`;--d:${-e}ms`;cls=' sink';st+=dv;foam+=`<i class="drown ${v?'v':'h'}" style="${pos}${dv}"></i><i class="xboom" style="${pos}${dv}"></i><i class="smoke" style="${pos}${dv}"></i><i class="bubbles" style="${pos}${dv}"></i>`}else cls=' wreck'}
    else if(mine){const d=k*230,e=BS.fx(n,'p'+(n.pid||0)+'-'+k,d+1000);if(e>=0){cls=' drop';st+=`;animation-delay:${d-e}ms`}}
    h+=`<div class="ship ${v?'v':'h'}${cls}" style="${st}"></div>`});
   h+='</div><div class="lay">';
@@ -274,10 +278,10 @@ const BS={name:'Touché coulé',icon:'⚓',bg:'var(--ac)',sub:'Bataille navale �
   return h+foam+'</div></div>'},
  ui(n){const op=n.oppName||'Adversaire',over=n.phase==='over',host=n.role==='host';
   const left=5-n.en.ns,mine=5-n.my.ships.filter(s=>s.every(c=>n.my.shots[c]===2)).length;
-  if(n.bp==='place'){const wait=n.mr;return `<p class="msg">${wait?'En attente de '+esc(op)+'…':'Place ta flotte, puis clique sur Prêt.'}</p>`+(wait?'':'<div class="bar"><button onclick="BS.shuffle()">Mélanger mes bateaux</button><button class="go" onclick="BS.ready(NET);render()">Prêt</button></div>')+BS.grid(n,true)}
+  if(n.bp==='place'){const wait=n.mr;return `<div class="bsw"><p class="msg">${wait?'En attente de '+esc(op)+'…':'Place ta flotte, puis clique sur Prêt.'}</p>`+(wait?'':'<div class="bar"><button onclick="BS.shuffle()">Mélanger mes bateaux</button><button class="go" onclick="BS.ready(NET);render()">Prêt</button></div>')+BS.grid(n,true)+'</div>'}
   const st=over?(n.res.won?'Victoire ! Tu as coulé toute la flotte.':'Défaite… '+op+' a coulé ta flotte.'):n.turn===n.role?'À toi de tirer !':op+' vise…';
-  return `<p class="msg" aria-live="polite">${esc(st)}</p><p class="hint">${esc(n.msg||'')}</p>`+(over?(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>'):'')+
-  `<div class="seas"><div><h2>Flotte de ${esc(op)} (${left} bateaux) : tire ici</h2>${BS.grid(n,false)}</div><div><h2>Ma flotte (${mine} bateaux)</h2>${BS.grid(n,true)}</div></div>`}};
+  return `<div class="bsw"><p class="msg" aria-live="polite">${esc(st)}</p><p class="hint">${esc(n.msg||'')}</p>`+(over?(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>'):'')+
+  `<div class="seas"><div><h2>Ma flotte (${mine} bateau${mine>1?'x':''})</h2>${BS.grid(n,true)}</div><div><h2>Flotte de ${esc(op)} (${left} bateau${left>1?'x':''}) : tire ici</h2>${BS.grid(n,false)}</div></div></div>`}};
 /* Pour ajouter un futur mode : créer un objet comme QE ou BS (init, opts, hello, begin, msg, ui) et l'ajouter ici */
 const GAMES={qe:QE,bs:BS};
 /* ====== Admin (gestion des Qui est-ce ?) ====== */
@@ -301,7 +305,6 @@ function render(){
  $('adm').hidden=!admin;$('th').className=view!=='edit'?'on':'';$('th').onclick=()=>go(NET?'net':'hub');$('te').className=view==='edit'?'on':'';
  $('lock').textContent=admin?'🔓':'🔒';$('lock').setAttribute('aria-label',admin?'Quitter le mode admin':'Mode admin');
  ['hub','mode','jform','net','edit'].forEach(v=>$(v).hidden=view!==v);
- if(view!=='net')setBanner('','');
  ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit})[view]();
  if(fid&&fid!=='lock'&&$(fid)&&$(fid).focus&&view!=='edit'){$(fid).focus();try{$(fid).setSelectionRange(pos,pos)}catch(e){}}
 }
@@ -314,7 +317,6 @@ function renderMode(){const G=GAMES[gid];
 function renderJform(){const G=GAMES[gid];
  $('jform').innerHTML=`<div class="bar"><button onclick="go('mode')">← Retour</button><b>${esc(G.name)}</b></div><div class="box"><h2>Rejoindre une partie</h2><label for="jp"><b>Pseudo</b> (obligatoire)</label><br><input id="jp" type="text" maxlength="16" value="${esc(D.pseudo||'')}" autocomplete="off" required><br><br><label for="jc"><b>Code de la partie</b> (obligatoire)</label><br><input id="jc" type="text" maxlength="5" autocomplete="off" required style="text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGo()"><div class="err" id="je" aria-live="polite"></div><button class="go" onclick="joinGo()">Jouer</button></div>`;
 }
-function setBanner(cls,txt){const b=$('banner');if(!txt){b.hidden=true;b.dataset.k='';return}const k=cls+txt;if(b.dataset.k===k&&!b.hidden)return;b.dataset.k=k;b.className='banner '+cls;b.textContent=txt;b.hidden=false}
 function bannerFor(n){if(!n||n.phase==='lobby')return['',''];if(n.phase==='over')return n.res&&n.res.won?['win','Vous avez gagné !']:['lose','Vous avez perdu…'];
  if(n.g==='bs'&&n.bp!=='play')return['',''];const busy=n.g==='bs'?n.wait:n.waiting;return n.turn===n.role&&!busy?['turn','C’est ton tour !']:['','']}
 function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
@@ -328,8 +330,8 @@ function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
    (n.err?'':`<div class="empty">${n.opp?`<b>${esc(n.oppName)}</b> a rejoint la partie.`+(n.pr?'':n.g==='qe'&&!n.deck.photos.length?'<br><b>Ajoute d’abord au moins 2 photos</b> : bouton « Ajouter des personnages » ci-dessous.':'<br>Envoi des données…'):!n.online?'Création de la partie…':esc(n.note||'En attente de l’autre joueur…')}</div>`)+`<div class="bar"><button class="go" onclick="launch()" ${can?'':'disabled'}>Lancer la partie</button>${n.g==='qe'?'<button onclick="addChars()">Ajouter des personnages</button>':''}</div>`+(n.opp&&!n.pseudo.trim()?'<p class="hint">Entre ton pseudo pour pouvoir lancer.</p>':'')}
   else{const ph=n.deck.photos,ok=ph.filter(p=>p.src).length;
    if(!n.err)h+=`<div class="empty">${!n.opp?'Connexion à la partie…':ph.length&&ok<ph.length?`Chargement des photos (${ok}/${ph.length})…`:'Connecté. En attente du lancement par l’hôte…'}</div>`}}
- else h+=G.ui(n);
- $('net').innerHTML=h;setBanner(...bannerFor(n))}
+ else{let u=G.ui(n);const[bc,bt]=bannerFor(n);if(bt){const k=bc+bt,bh=`<div class="bwrap" aria-live="polite"><div class="banner ${bc}${n._bk===k?' nopop':''}">${esc(bt)}</div></div>`;n._bk=k;const i=n.g==='qe'?u.lastIndexOf('<div class="grid'):-1;u=i>=0?u.slice(0,i)+bh+u.slice(i):u+bh}else n._bk='';h+=u}
+ $('net').innerHTML=h}
 function renderEdit(){
  const dk=D.decks.find(d=>d.id===D.cur);
  let h=(NET?'<div class="bar"><button class="go" onclick="go(\'net\')">← Retour à la partie en cours</button></div>':'')+'<h2>Mes Qui est-ce ?</h2><div class="bar">'+D.decks.map(d=>`<button class="${d.id===D.cur?'on':''}" onclick="D.cur='${d.id}';cd=0;save();render()">${esc(d.name)}</button>`).join('')+'</div>';
