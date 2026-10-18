@@ -274,6 +274,7 @@ function renPhoto(id,v){D.decks.find(d=>d.id===D.cur).photos.find(p=>p.id===id).
 function renDeck(v){const dk=D.decks.find(d=>d.id===D.cur);dk.name=v.trim().slice(0,24)||dk.name;save();render()}
 /* ====== Affichage ====== */
 function go(v){view=v;cd=0;render()}
+function addChars(){if(admin)go('edit');else openModal()}
 function render(){
  if(!loaded)return;
  if(view==='edit'&&!admin)view='hub';
@@ -281,7 +282,7 @@ function render(){
  if(view==='net'&&!NET)view='hub';
  if(!D.cur&&D.decks[0])D.cur=D.decks[0].id;
  const ae=document.activeElement,fid=ae&&ae.id,pos=ae&&ae.selectionStart;
- $('adm').hidden=!admin;$('th').className=view!=='edit'?'on':'';$('te').className=view==='edit'?'on':'';
+ $('adm').hidden=!admin;$('th').className=view!=='edit'?'on':'';$('th').onclick=()=>go(NET?'net':'hub');$('te').className=view==='edit'?'on':'';
  $('lock').textContent=admin?'🔓':'🔒';$('lock').setAttribute('aria-label',admin?'Quitter le mode admin':'Mode admin');
  ['hub','mode','jform','net','edit'].forEach(v=>$(v).hidden=view!==v);
  ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit})[view]();
@@ -297,20 +298,21 @@ function renderJform(){const G=GAMES[gid];
  $('jform').innerHTML=`<div class="bar"><button onclick="go('mode')">← Retour</button><b>${esc(G.name)}</b></div><div class="box"><h2>Rejoindre une partie</h2><label for="jp"><b>Pseudo</b> (obligatoire)</label><br><input id="jp" type="text" maxlength="16" value="${esc(D.pseudo||'')}" autocomplete="off" required><br><br><label for="jc"><b>Code de la partie</b> (obligatoire)</label><br><input id="jc" type="text" maxlength="5" autocomplete="off" required style="text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGo()"><div class="err" id="je" aria-live="polite"></div><button class="go" onclick="joinGo()">Jouer</button></div>`;
 }
 function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
+ if(host&&n.g==='qe'&&n.phase==='lobby'&&!n.deck.photos.length&&QE.okDecks().length){QE.init(n)}
  if(host&&n.online)h+=`<div class="codebox"><b>${n.show?esc(n.code):'•••••'}</b><button class="ib" onclick="NET.show=!NET.show;render()" aria-label="${n.show?'Masquer':'Afficher'} le code" title="${n.show?'Masquer':'Afficher'} le code">${n.show?'🙈':'👁️'}</button><button class="ib" onclick="copyCode()" aria-label="Copier le code" title="Copier le code">📋</button></div>${n.cp?`<span class="hint"> ${esc(n.cp)}</span>`:''}`;
  h+=`<div class="bar"><button onclick="leaveNet()">← Quitter</button><b>${esc(G.name)}</b></div>`;
  if(n.err)h+=`<div class="empty"><b>${esc(n.err)}</b><div class="bar" style="justify-content:center;margin:10px 0 0"><button onclick="retry()">Réessayer</button></div></div>`;
  if(n.phase==='lobby'){
   if(host){const can=n.pseudo.trim()&&n.opp&&n.pr;
    h+=`<div class="box"><label for="ps"><b>Ton pseudo</b></label><br><input id="ps" type="text" maxlength="16" placeholder="Ton pseudo" value="${esc(n.pseudo)}" autocomplete="off" oninput="NET.pseudo=this.value;render()" onchange="D.pseudo=this.value.trim();save()">`+(G.opts(n)?'<div style="margin-top:10px">'+G.opts(n)+'</div>':'')+'</div>'+
-   (n.err?'':`<div class="empty">${n.opp?`<b>${esc(n.oppName)}</b> a rejoint la partie.`+(n.pr?'':'<br>Envoi des données…'):!n.online?'Création de la partie…':esc(n.note||'En attente de l’autre joueur…')}</div>`)+`<div class="bar"><button class="go" onclick="launch()" ${can?'':'disabled'}>Lancer la partie</button></div>`+(n.opp&&!n.pseudo.trim()?'<p class="hint">Entre ton pseudo pour pouvoir lancer.</p>':'')}
+   (n.err?'':`<div class="empty">${n.opp?`<b>${esc(n.oppName)}</b> a rejoint la partie.`+(n.pr?'':n.g==='qe'&&!n.deck.photos.length?'<br><b>Ajoute d’abord au moins 2 photos</b> : bouton « Ajouter des personnages » ci-dessous.':'<br>Envoi des données…'):!n.online?'Création de la partie…':esc(n.note||'En attente de l’autre joueur…')}</div>`)+`<div class="bar"><button class="go" onclick="launch()" ${can?'':'disabled'}>Lancer la partie</button>${n.g==='qe'?'<button onclick="addChars()">Ajouter des personnages</button>':''}</div>`+(n.opp&&!n.pseudo.trim()?'<p class="hint">Entre ton pseudo pour pouvoir lancer.</p>':'')}
   else{const ph=n.deck.photos,ok=ph.filter(p=>p.src).length;
    if(!n.err)h+=`<div class="empty">${!n.opp?'Connexion à la partie…':ph.length&&ok<ph.length?`Chargement des photos (${ok}/${ph.length})…`:'Connecté. En attente du lancement par l’hôte…'}</div>`}}
  else h+=G.ui(n);
  $('net').innerHTML=h}
 function renderEdit(){
  const dk=D.decks.find(d=>d.id===D.cur);
- let h='<h2>Mes Qui est-ce ?</h2><div class="bar">'+D.decks.map(d=>`<button class="${d.id===D.cur?'on':''}" onclick="D.cur='${d.id}';cd=0;save();render()">${esc(d.name)}</button>`).join('')+'</div>';
+ let h=(NET?'<div class="bar"><button class="go" onclick="go(\'net\')">← Retour à la partie en cours</button></div>':'')+'<h2>Mes Qui est-ce ?</h2><div class="bar">'+D.decks.map(d=>`<button class="${d.id===D.cur?'on':''}" onclick="D.cur='${d.id}';cd=0;save();render()">${esc(d.name)}</button>`).join('')+'</div>';
  h+='<div class="bar"><input id="nn" type="text" maxlength="24" placeholder="Nouveau jeu (ex : Famille)" onkeydown="if(event.key===\'Enter\')addDeck()"><button class="go" onclick="addDeck()">Créer le jeu</button></div>';
  if(!dk){h+='<div class="empty">Crée ton premier jeu, puis ajoute-lui des personnages.</div>'}
  else{h+=`<div class="box"><div class="bar"><input id="rn" type="text" maxlength="24" value="${esc(dk.name)}" aria-label="Nom du jeu" onchange="renDeck(this.value)"><label class="btn go">Ajouter des photos<input type="file" accept="image/*" multiple hidden onchange="addPhotos(this)"></label><button onclick="delDeck()">${cd?'Confirmer la suppression ?':'Supprimer le jeu'}</button></div>
