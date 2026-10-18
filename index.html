@@ -110,6 +110,7 @@ border:2px dashed var(--bd);border-radius:12px;margin-bottom:12px}
 .banner.nopop{animation:none}
 @media(prefers-reduced-motion:reduce){.banner{animation:none}}
 
+.codein{display:inline-flex;align-items:center;gap:6px}.codein input{letter-spacing:3px;font-weight:700;width:150px}.codein .ib{padding:6px 9px}
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>MonkuGames</h1>
@@ -301,6 +302,7 @@ function renPhoto(id,v){D.decks.find(d=>d.id===D.cur).photos.find(p=>p.id===id).
 function renDeck(v){const dk=D.decks.find(d=>d.id===D.cur);dk.name=v.trim().slice(0,24)||dk.name;save();render()}
 /* ====== Affichage ====== */
 function go(v){view=v;cd=0;render()}
+function toggleCode(){const i=$('jc'),b=$('jeye'),show=i.type==='password';i.type=show?'text':'password';b.textContent=show?'🙈':'👁️';b.setAttribute('aria-label',show?'Masquer le code':'Afficher le code');b.title=b.getAttribute('aria-label');i.focus()}
 function addChars(){if(admin)go('edit');else openModal()}
 function render(){
  if(!loaded)return;
@@ -322,7 +324,7 @@ function renderMode(){const G=GAMES[gid];
  $('mode').innerHTML=`<div class="bar"><button onclick="go('hub')">← MonkuGames</button></div><h2>${esc(G.name)}</h2><div class="grid menu"><button class="c" onclick="hostGo()"><div class="q">🏠</div><span>Héberger</span><small>Crée une partie et reçois un code</small></button><button class="c" onclick="go('jform')"><div class="q" style="background:var(--ac)">🔑</div><span>Rejoindre</span><small>Entre le code de l’hôte</small></button></div>`;
 }
 function renderJform(){const G=GAMES[gid];
- $('jform').innerHTML=`<div class="bar"><button onclick="go('mode')">← Retour</button><b>${esc(G.name)}</b></div><div class="box"><h2>Rejoindre une partie</h2><label for="jp"><b>Pseudo</b> (obligatoire)</label><br><input id="jp" type="text" maxlength="16" value="${esc(D.pseudo||'')}" autocomplete="off" required><br><br><label for="jc"><b>Code de la partie</b> (obligatoire)</label><br><input id="jc" type="text" maxlength="5" autocomplete="off" required style="text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGo()"><div class="err" id="je" aria-live="polite"></div><button class="go" onclick="joinGo()">Jouer</button></div>`;
+ $('jform').innerHTML=`<div class="bar"><button onclick="go('mode')">← Retour</button><b>${esc(G.name)}</b></div><div class="box"><h2>Rejoindre une partie</h2><label for="jp"><b>Pseudo</b> (obligatoire)</label><br><input id="jp" type="text" maxlength="16" value="${esc(D.pseudo||'')}" autocomplete="off" required><br><br><label for="jc"><b>Code de la partie</b> (obligatoire)</label><br><span class="codein"><input id="jc" type="password" maxlength="5" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" required style="text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGo()"><button type="button" class="ib" id="jeye" onclick="toggleCode()" aria-label="Afficher le code" title="Afficher le code">👁️</button></span><div class="err" id="je" aria-live="polite"></div><button class="go" onclick="joinGo()">Jouer</button></div>`;
 }
 function bannerFor(n){if(!n||n.phase==='lobby')return['',''];if(n.phase==='over')return n.res&&n.res.won?['win','Vous avez gagné !']:['lose','Vous avez perdu…'];
  if(n.g==='bs'&&n.bp!=='play')return['',''];const busy=n.g==='bs'?n.wait:n.waiting,op=n.oppName||'L’adversaire';if(n.turn===n.role)return busy?['wait','En attente de '+op+'…']:['turn','C’est ton tour !'];return['wait',op+(n.g==='bs'?' vise…':' joue…')]}
