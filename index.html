@@ -61,26 +61,43 @@ input[type=text],input[type=password],select{font:inherit;font-size:15px;padding
 .ship.h::after{left:28%;top:32%;width:24%;height:36%}
 .ship.v::after{top:28%;left:32%;height:24%;width:36%}
 .drop{animation:drop .9s cubic-bezier(.3,1.5,.5,1) both}
-.sink{animation:sink 2.6s ease-in forwards}
-.wreck{opacity:.22;filter:brightness(.55);transform:translateY(8%) rotate(var(--tilt)) scale(.9)}
+.ship.h{transform-origin:12% 50%;--dive:perspective(260px) rotateY(55deg) scale(.85)}
+.ship.v{transform-origin:50% 12%;--dive:perspective(260px) rotateX(-55deg) scale(.85)}
+.sink{animation:sink 3.4s ease-in both;animation-delay:var(--d,0ms)}
+.xboom{place-self:center;width:120%;height:320%;border-radius:50%;background:radial-gradient(ellipse,#fff 0 8%,#ffe066 18%,#ff9a1f 38%,#ff3d00 55%,rgba(255,61,0,0) 70%);animation:xboom 1s ease-out both;animation-delay:var(--d,0ms)}
+.smoke{place-self:stretch;position:relative}
+.smoke::before,.smoke::after{content:"";position:absolute;left:5%;right:25%;top:-20%;height:140%;background:radial-gradient(circle at 25% 55%,rgba(25,25,30,.9) 0 20%,transparent 21%),radial-gradient(circle at 55% 40%,rgba(45,45,50,.85) 0 25%,transparent 26%),radial-gradient(circle at 80% 60%,rgba(20,20,25,.85) 0 17%,transparent 18%);filter:blur(1.5px);animation:smoke 2.6s ease-out both;animation-delay:calc(var(--d,0ms) + 250ms)}
+.smoke::after{left:25%;right:5%;animation-delay:calc(var(--d,0ms) + 700ms)}
+.bubbles{place-self:stretch;background:radial-gradient(circle at 62% 55%,rgba(255,255,255,.95) 0 3px,transparent 4px),radial-gradient(circle at 74% 30%,rgba(255,255,255,.85) 0 2px,transparent 3px),radial-gradient(circle at 86% 62%,rgba(255,255,255,.95) 0 4px,transparent 5px),radial-gradient(circle at 93% 38%,rgba(255,255,255,.8) 0 2px,transparent 3px),radial-gradient(circle at 45% 70%,rgba(255,255,255,.8) 0 2px,transparent 3px);animation:bubbles 3.4s ease-out both;animation-delay:var(--d,0ms)}
+@keyframes xboom{0%{transform:scale(.1);opacity:1}45%{transform:scale(1);opacity:.95}100%{transform:scale(1.3);opacity:0}}
+@keyframes smoke{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:.95}100%{opacity:0;transform:translateY(-150%) scale(1.7)}}
+@keyframes bubbles{0%,45%{opacity:0;transform:translateY(25%)}62%{opacity:1}100%{opacity:0;transform:translateY(-30%)}}
+.wreck{opacity:.25;transform:var(--dive);filter:brightness(.55) sepia(.6)}
 .fire{place-self:center;font-style:normal;font-size:clamp(14px,3.8vw,26px);line-height:1;transform-origin:50% 90%;filter:drop-shadow(0 0 6px #ff9a1f);animation:flame .6s ease-in-out infinite alternate}
 .boom{place-self:center;width:280%;height:280%;border-radius:50%;background:radial-gradient(circle,#fff 0 10%,#ffe066 20%,#ff9a1f 40%,#ff3d00 58%,rgba(255,61,0,0) 72%);animation:boom .8s ease-out both}
 .miss{place-self:center;width:30%;height:30%;border-radius:50%;background:rgba(255,255,255,.9);border:2px solid var(--ac2)}
 .miss.new{animation:splash .7s ease-out both}
 .foam{place-self:center;font-style:normal;font-size:clamp(16px,4vw,28px);animation:foam 2.6s ease-out both}
 @keyframes drop{0%{transform:translateY(-170%) scale(1.35);opacity:0}55%{opacity:1}100%{transform:none;opacity:1}}
-@keyframes sink{0%{transform:none;opacity:1;filter:none}20%{transform:rotate(var(--tilt)) translateY(1%)}100%{transform:translateY(8%) rotate(var(--tilt)) scale(.9);opacity:.22;filter:brightness(.55)}}
+@keyframes sink{0%{transform:none;opacity:1;filter:brightness(2.4) saturate(.3)}4%{transform:translate(4%,-3%)}8%{transform:translate(-4%,3%)}12%{transform:translate(3%,2%);filter:brightness(1.5)}16%{transform:translate(-2%,-1%)}30%{transform:none;filter:brightness(.55) sepia(.6);opacity:1}100%{transform:var(--dive);filter:brightness(.55) sepia(.6);opacity:.25}}
 @keyframes flame{from{transform:scale(.82) rotate(-5deg)}to{transform:scale(1.15) rotate(5deg)}}
 @keyframes boom{0%{transform:scale(.1);opacity:1}55%{transform:scale(1);opacity:.95}100%{transform:scale(1.35);opacity:0}}
 @keyframes splash{0%{transform:scale(2.4);opacity:0}30%{opacity:1}100%{transform:scale(1);opacity:1}}
 @keyframes foam{0%{opacity:0;transform:scale(.3)}25%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-30%) scale(1.5)}}
-@media(prefers-reduced-motion:reduce){.drop,.sink,.fire,.miss.new,.foam{animation:none!important}.boom{display:none}}
+@media(prefers-reduced-motion:reduce){.xboom,.smoke,.bubbles{display:none}.drop,.sink,.fire,.miss.new,.foam{animation:none!important}.boom{display:none}}
 .lock{position:fixed;right:calc(10px + env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));width:34px;height:34px;padding:0;border-radius:50%;border-width:1px;opacity:.3;font-size:15px;line-height:1}
 .lock:hover,.lock:focus-visible{opacity:1}
 #modal{position:fixed;inset:0;background:rgba(20,10,40,.6);display:grid;place-items:center;padding:16px;z-index:10}
 .dlg{background:var(--card);border:3px solid var(--fg);border-radius:14px;padding:16px;max-width:340px;width:100%}
 .dlg input{width:100%;margin:6px 0}
 .err{color:var(--ac);font-weight:700;min-height:1.4em;margin:2px 0 6px}
+.banner{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:5;pointer-events:none;text-align:center;white-space:nowrap;font:900 clamp(22px,5vw,36px)/1.1 "Arial Black","Impact",sans-serif;padding:14px 26px;border-radius:16px;border:3px solid var(--fg);box-shadow:0 8px 24px rgba(0,0,0,.35);animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
+.banner.turn{background:var(--ac2);color:#fff;font-size:clamp(18px,4vw,26px);padding:10px 22px}
+.banner.win{background:#1fa463;color:#fff;font-size:clamp(34px,9vw,64px);padding:18px 34px}
+.banner.lose{background:var(--ac);color:#fff;font-size:clamp(34px,9vw,64px);padding:18px 34px}
+@keyframes pop{0%{transform:translateX(-50%) scale(.4);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.banner{animation:none}}
+main{padding-bottom:140px}
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>MonkuGames</h1>
@@ -91,6 +108,7 @@ input[type=text],input[type=password],select{font:inherit;font-size:15px;padding
 <section id="net" hidden></section>
 <section id="edit" hidden></section>
 </main>
+<div id="banner" class="banner" hidden aria-live="polite"></div>
 <button class="lock" id="lock" onclick="lockClick()" aria-label="Mode admin">🔒</button>
 <div id="modal" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="mt">
 <b id="mt"></b><div class="hint" id="mh"></div>
@@ -204,21 +222,19 @@ const QE={name:'Qui est-ce ?',icon:'?',bg:'var(--ac2)',sub:'Devine le personnage
   case 'img':if(n.role==='join')gotImg(n,d);break;
   case 'need':{const p=n.deck.photos.find(x=>x.id===d.id);if(p)sendImg(n,p)}break;
   case 'ready':if(n.role==='host')n.pr=true;break;
+  case 'end':if(n.phase==='play'&&n.turn!==n.role)n.turn=n.role;break;
   case 'q':n.log.push({w:'opp',x:String(d.x||'').slice(0,140),a:null});n.toAnswer=true;break;
   case 'a':{const l=[...n.log].reverse().find(e=>e.w==='me'&&e.a===null);if(l)l.a=!!d.v;n.waiting=false;n.turn=n.role==='host'?'join':'host'}break;
   case 'g':{if(n.phase!=='play'||n.turn===n.role)break;const ok=d.id===n.secret;send({t:'r',ok,s:n.secret});n.phase='over';n.res={won:!ok,theirs:d.s}}break;
   case 'r':n.phase='over';n.waiting=false;n.res={won:!!d.ok,theirs:d.s};break}},
  ui(n){const ph=n.deck.photos,host=n.role==='host',by2=id=>ph.find(p=>p.id===id),me=by2(n.secret),mine=n.turn===n.role,over=n.phase==='over',op=n.oppName||'Adversaire';
-  const st=over?(n.res.won?'Tu as gagné !':'Tu as perdu…'):n.toAnswer?'Réponds à la question de '+op+'.':n.waiting?'En attente de '+op+'…':mine?'À toi : pose une question ou devine.':op+' réfléchit…';
-  let h=`<p class="msg" aria-live="polite">${esc(st)}</p>`;
+  const st=over?(n.res.won?'Tu as gagné !':'Tu as perdu…'):n.waiting?'En attente de '+op+'…':mine?(n.guessing?'Touche le personnage de '+op+'.':'Pose ta question à voix haute, abaisse tes cartes, puis passe ton tour ou devine.'):op+' joue…';
+  let h=`<p class="msg">${esc(st)}</p>`;
   if(over){const t=by2(n.res.theirs);h+=`<p>Personnage de ${esc(op)} : <b>${esc(t?t.name:'?')}</b> · Le tien : <b>${esc(me?me.name:'?')}</b></p>`+(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>')}
-  else if(n.toAnswer){const q=[...n.log].reverse().find(e=>e.w==='opp');h+=`<div class="box"><b>${esc(q?q.x:'')}</b><div class="bar" style="margin-top:8px"><button class="go" onclick="QE.answer(true)">Oui</button><button onclick="QE.answer(false)">Non</button></div></div>`}
-  else if(mine&&!n.waiting)h+=`<div class="bar"><input id="qi" type="text" maxlength="140" placeholder="Ta question (réponse oui ou non)" value="${esc(n.draft||'')}" oninput="NET.draft=this.value" onkeydown="if(event.key==='Enter')QE.ask()" style="flex:1 1 200px"><button class="go" onclick="QE.ask()">Demander</button><button class="${n.guessing?'on':''}" onclick="NET.guessing=!NET.guessing;render()">${n.guessing?'Choisis une carte…':'Deviner'}</button></div>`;
+  else if(mine&&!n.waiting)h+=`<div class="bar"><button class="go" onclick="QE.end()">Fin de mon tour</button><button class="${n.guessing?'on':''}" onclick="NET.guessing=!NET.guessing;render()">${n.guessing?'Annuler':'Deviner'}</button></div>`;
   h+=`<div class="secret"><div class="c">${n.peek&&me?`<img src="${me.src}" alt=""><span>${esc(me.name)}</span>`:'<div class="q">?</div>'}</div><div><b>Mon personnage secret</b><div class="bar" style="margin:6px 0 0"><button onclick="NET.peek=!NET.peek;render()">${n.peek?'Cacher':'Voir'}</button></div></div></div>`;
-  if(n.log.length)h+='<div class="log">'+n.log.map(e=>`<div><b>${esc(e.w==='me'?n.pseudo:op)}</b> : ${esc(e.x)} → ${e.a===null?'…':e.a?'Oui':'Non'}</div>`).join('')+'</div>';
   return h+`<div class="grid ${n.guessing?'guessing':''}">`+ph.map(x=>`<button class="c ${n.down.includes(x.id)?'down':''}" onclick="QE.flip('${x.id}')"><img src="${x.src}" alt=""><span>${esc(x.name)}</span></button>`).join('')+'</div>'},
- ask(){const n=NET,v=($('qi').value||'').trim().slice(0,140);if(!v||n.turn!==n.role||n.waiting)return;n.log.push({w:'me',x:v,a:null});n.waiting=true;n.draft='';send({t:'q',x:v});render()},
- answer(v){const n=NET;if(!n.toAnswer)return;send({t:'a',v});const l=[...n.log].reverse().find(e=>e.w==='opp'&&e.a===null);if(l)l.a=v;n.toAnswer=false;n.turn=n.role;render()},
+ end(){const n=NET;if(n.phase!=='play'||n.turn!==n.role||n.waiting)return;n.guessing=false;n.turn=n.role==='host'?'join':'host';send({t:'end'});render()},
  flip(id){const n=NET;if(n.guessing&&n.turn===n.role&&!n.waiting){n.guessing=false;n.waiting=true;send({t:'g',id,s:n.secret})}else{const i=n.down.indexOf(id);i<0?n.down.push(id):n.down.splice(i,1)}render()}};
 /* ====== Mode : Touché coulé ====== */
 const SZ=[5,4,3,3,2];
@@ -248,7 +264,7 @@ const BS={name:'Touché coulé',icon:'⚓',bg:'var(--ac)',sub:'Bataille navale �
   h+='<div class="lay">';
   ships.forEach((s,k)=>{const v=s[1]-s[0]!==1,r=Math.floor(s[0]/10),c=s[0]%10,pos=v?`grid-column:${c+1};grid-row:${r+1}/span ${s.length}`:`grid-row:${r+1};grid-column:${c+1}/span ${s.length}`;
    let cls='',st=pos+`;--tilt:${s[0]%2?'-10deg':'9deg'}`;
-   if(isSunk(s)){const e=BS.fx(n,pre+'s'+s[0],2600);if(e>=0){cls=' sink';st+=`;animation-delay:${-e}ms`;foam+=`<i class="foam" style="${pos};animation-delay:${-e}ms">🌊</i>`}else cls=' wreck'}
+   if(isSunk(s)){const e=BS.fx(n,pre+'s'+s[0],3400);if(e>=0){const dv=`;--d:${-e}ms`;cls=' sink';st+=dv;foam+=`<i class="xboom" style="${pos}${dv}"></i><i class="smoke" style="${pos}${dv}"></i><i class="bubbles" style="${pos}${dv}"></i>`}else cls=' wreck'}
    else if(mine){const d=k*230,e=BS.fx(n,'p'+(n.pid||0)+'-'+k,d+1000);if(e>=0){cls=' drop';st+=`;animation-delay:${d-e}ms`}}
    h+=`<div class="ship ${v?'v':'h'}${cls}" style="${st}"></div>`});
   h+='</div><div class="lay">';
@@ -285,6 +301,7 @@ function render(){
  $('adm').hidden=!admin;$('th').className=view!=='edit'?'on':'';$('th').onclick=()=>go(NET?'net':'hub');$('te').className=view==='edit'?'on':'';
  $('lock').textContent=admin?'🔓':'🔒';$('lock').setAttribute('aria-label',admin?'Quitter le mode admin':'Mode admin');
  ['hub','mode','jform','net','edit'].forEach(v=>$(v).hidden=view!==v);
+ if(view!=='net')setBanner('','');
  ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit})[view]();
  if(fid&&fid!=='lock'&&$(fid)&&$(fid).focus&&view!=='edit'){$(fid).focus();try{$(fid).setSelectionRange(pos,pos)}catch(e){}}
 }
@@ -297,6 +314,9 @@ function renderMode(){const G=GAMES[gid];
 function renderJform(){const G=GAMES[gid];
  $('jform').innerHTML=`<div class="bar"><button onclick="go('mode')">← Retour</button><b>${esc(G.name)}</b></div><div class="box"><h2>Rejoindre une partie</h2><label for="jp"><b>Pseudo</b> (obligatoire)</label><br><input id="jp" type="text" maxlength="16" value="${esc(D.pseudo||'')}" autocomplete="off" required><br><br><label for="jc"><b>Code de la partie</b> (obligatoire)</label><br><input id="jc" type="text" maxlength="5" autocomplete="off" required style="text-transform:uppercase" onkeydown="if(event.key==='Enter')joinGo()"><div class="err" id="je" aria-live="polite"></div><button class="go" onclick="joinGo()">Jouer</button></div>`;
 }
+function setBanner(cls,txt){const b=$('banner');if(!txt){b.hidden=true;b.dataset.k='';return}const k=cls+txt;if(b.dataset.k===k&&!b.hidden)return;b.dataset.k=k;b.className='banner '+cls;b.textContent=txt;b.hidden=false}
+function bannerFor(n){if(!n||n.phase==='lobby')return['',''];if(n.phase==='over')return n.res&&n.res.won?['win','Vous avez gagné !']:['lose','Vous avez perdu…'];
+ if(n.g==='bs'&&n.bp!=='play')return['',''];const busy=n.g==='bs'?n.wait:n.waiting;return n.turn===n.role&&!busy?['turn','C’est ton tour !']:['','']}
 function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
  if(host&&n.g==='qe'&&n.phase==='lobby'&&!n.deck.photos.length&&QE.okDecks().length){QE.init(n)}
  if(host&&n.online)h+=`<div class="codebox"><b>${n.show?esc(n.code):'•••••'}</b><button class="ib" onclick="NET.show=!NET.show;render()" aria-label="${n.show?'Masquer':'Afficher'} le code" title="${n.show?'Masquer':'Afficher'} le code">${n.show?'🙈':'👁️'}</button><button class="ib" onclick="copyCode()" aria-label="Copier le code" title="Copier le code">📋</button></div>${n.cp?`<span class="hint"> ${esc(n.cp)}</span>`:''}`;
@@ -309,7 +329,7 @@ function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
   else{const ph=n.deck.photos,ok=ph.filter(p=>p.src).length;
    if(!n.err)h+=`<div class="empty">${!n.opp?'Connexion à la partie…':ph.length&&ok<ph.length?`Chargement des photos (${ok}/${ph.length})…`:'Connecté. En attente du lancement par l’hôte…'}</div>`}}
  else h+=G.ui(n);
- $('net').innerHTML=h}
+ $('net').innerHTML=h;setBanner(...bannerFor(n))}
 function renderEdit(){
  const dk=D.decks.find(d=>d.id===D.cur);
  let h=(NET?'<div class="bar"><button class="go" onclick="go(\'net\')">← Retour à la partie en cours</button></div>':'')+'<h2>Mes Qui est-ce ?</h2><div class="bar">'+D.decks.map(d=>`<button class="${d.id===D.cur?'on':''}" onclick="D.cur='${d.id}';cd=0;save();render()">${esc(d.name)}</button>`).join('')+'</div>';
