@@ -94,7 +94,8 @@ input[type=text],input[type=password],select{font:inherit;font-size:15px;padding
 .dlg{background:var(--card);border:3px solid var(--fg);border-radius:14px;padding:16px;max-width:340px;width:100%}
 .dlg input{width:100%;margin:6px 0}
 .err{color:var(--ac);font-weight:700;min-height:1.4em;margin:2px 0 6px}
-.bwrap{display:flex;justify-content:center;margin:22px 0 10px}
+.bwrap{display:flex;justify-content:center;margin:0 0 8px}
+.bottom{text-align:center;margin:20px 0 14px}.bottom .msg{font-size:22px;margin:8px 0}.bottom .hint{font-size:17px;opacity:.85;margin:4px 0}
 .banner{display:inline-block;max-width:100%;text-align:center;font:900 clamp(22px,5vw,36px)/1.1 "Arial Black","Impact",sans-serif;padding:14px 26px;border-radius:16px;border:3px solid var(--fg);box-shadow:0 8px 24px rgba(0,0,0,.35);animation:pop .45s cubic-bezier(.3,1.6,.5,1) both}
 .banner.turn{background:var(--ac2);color:#fff;font-size:clamp(24px,5vw,40px);padding:12px 26px}
 .banner.win{background:#1fa463;color:#fff;font-size:clamp(24px,5vw,40px);padding:12px 26px}
@@ -281,7 +282,7 @@ const BS={name:'Touché coulé',icon:'⚓',bg:'var(--ac)',sub:'Bataille navale �
   if(n.bp==='place'){const wait=n.mr;return `<div class="bsw"><p class="msg">${wait?'En attente de '+esc(op)+'…':'Place ta flotte, puis clique sur Prêt.'}</p>`+(wait?'':'<div class="bar"><button onclick="BS.shuffle()">Mélanger mes bateaux</button><button class="go" onclick="BS.ready(NET);render()">Prêt</button></div>')+BS.grid(n,true)+'</div>'}
   const st=over?(n.res.won?'Victoire ! Tu as coulé toute la flotte.':'Défaite… '+op+' a coulé ta flotte.'):n.turn===n.role?'À toi de tirer !':op+' vise…';
   return `<div class="bsw"><p class="msg" aria-live="polite">${esc(st)}</p><p class="hint">${esc(n.msg||'')}</p>`+(over?(host?'<div class="bar"><button class="go" onclick="launch()">Nouvelle partie</button></div>':'<p class="hint">L’hôte peut lancer une nouvelle partie.</p>'):'')+
-  `<div class="seas"><div><h2>Ma flotte (${mine} bateau${mine>1?'x':''})</h2>${BS.grid(n,true)}</div><div><h2>Flotte de ${esc(op)} (${left} bateau${left>1?'x':''}) : tire ici</h2>${BS.grid(n,false)}</div></div></div>`}};
+  `<div class="seas"><div><h2>Ma flotte (${mine} bateau${mine>1?'x':''})</h2>${BS.grid(n,true)}</div><div><h2>Flotte de ${esc(op)} (${left} bateau${left>1?'x':''})</h2>${BS.grid(n,false)}</div></div></div>`}};
 /* Pour ajouter un futur mode : créer un objet comme QE ou BS (init, opts, hello, begin, msg, ui) et l'ajouter ici */
 const GAMES={qe:QE,bs:BS};
 /* ====== Admin (gestion des Qui est-ce ?) ====== */
@@ -330,7 +331,13 @@ function renderNet(){const n=NET,G=GAMES[n.g],host=n.role==='host';let h='';
    (n.err?'':`<div class="empty">${n.opp?`<b>${esc(n.oppName)}</b> a rejoint la partie.`+(n.pr?'':n.g==='qe'&&!n.deck.photos.length?'<br><b>Ajoute d’abord au moins 2 photos</b> : bouton « Ajouter des personnages » ci-dessous.':'<br>Envoi des données…'):!n.online?'Création de la partie…':esc(n.note||'En attente de l’autre joueur…')}</div>`)+`<div class="bar"><button class="go" onclick="launch()" ${can?'':'disabled'}>Lancer la partie</button>${n.g==='qe'?'<button onclick="addChars()">Ajouter des personnages</button>':''}</div>`+(n.opp&&!n.pseudo.trim()?'<p class="hint">Entre ton pseudo pour pouvoir lancer.</p>':'')}
   else{const ph=n.deck.photos,ok=ph.filter(p=>p.src).length;
    if(!n.err)h+=`<div class="empty">${!n.opp?'Connexion à la partie…':ph.length&&ok<ph.length?`Chargement des photos (${ok}/${ph.length})…`:'Connecté. En attente du lancement par l’hôte…'}</div>`}}
- else{let u=G.ui(n);const[bc,bt]=bannerFor(n);if(bt){const k=bc+bt,bh=`<div class="bwrap" aria-live="polite"><div class="banner ${bc}${n._bk===k?' nopop':''}">${esc(bt)}</div></div>`;n._bk=k;const i=n.g==='qe'?u.lastIndexOf('<div class="grid'):-1;u=i>=0?u.slice(0,i)+bh+u.slice(i):u+bh}else n._bk='';h+=u}
+ else{let u=G.ui(n);const[bc,bt]=bannerFor(n),inPlay=!(n.g==='bs'&&n.bp!=='play'&&n.phase!=='over');
+  if(!inPlay){n._bk='';h+=u}
+  else{const take=re=>{const m=u.match(re);if(!m)return'';u=u.replace(m[0],'');return m[0]};
+   const msg=take(/<p class="msg"[^>]*>[\s\S]*?<\/p>/),hint=n.g==='bs'?take(/<p class="hint">[\s\S]*?<\/p>/):'';
+   let bh='';if(bt){const k=bc+bt;bh=`<div class="bwrap" aria-live="polite"><div class="banner ${bc}${n._bk===k?' nopop':''}">${esc(bt)}</div></div>`;n._bk=k}else{n._bk='';bh=msg}
+   const blk=`<div class="bottom">${bh}</div>`,i=n.g==='qe'?u.lastIndexOf('<div class="grid'):-1;
+   h+=i>=0?u.slice(0,i)+blk+u.slice(i):u+blk}}
  $('net').innerHTML=h}
 function renderEdit(){
  const dk=D.decks.find(d=>d.id===D.cur);
