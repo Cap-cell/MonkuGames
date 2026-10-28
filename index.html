@@ -147,6 +147,30 @@ border:2px dashed var(--bd);border-radius:12px;margin-bottom:12px}
 .gmsg.win{background:#1fa463;color:#fff}.gmsg.lose{background:var(--ac);color:#fff}.gmsg.mid{background:#f0a020;color:#2a1d3a}
 .gmsg button{border-color:currentColor}
 .lb{width:100%;max-width:520px;margin:0 auto;border-collapse:collapse;font-size:16px}.lb th,.lb td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:left}.lb th{font-size:13px;opacity:.7}.lb tr.me td{background:color-mix(in srgb,var(--ac2) 30%,transparent);font-weight:800}
+.trwrap{background:#16161a;color:#ece6d4;border-radius:14px;padding:16px;overflow-x:auto;border:2px solid #3a331f}
+.trtitle{font:900 clamp(24px,5vw,36px)/1 "Arial Black","Impact",sans-serif;text-align:center;letter-spacing:1px;margin:0 0 14px;color:#fff}
+.trb{display:flex;gap:26px;min-width:880px;align-items:stretch}
+.trl{flex:1;display:flex;flex-direction:column;gap:18px}
+.trrow{display:flex;gap:22px}
+.trcol{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:14px;min-width:150px}
+.trcol>small,.trlab{font-size:12px;color:#d9b66a;text-align:center;font-weight:700}
+.trlab{text-align:left;font-size:13px;margin-bottom:6px}
+.trm{display:flex;flex-direction:column;gap:3px;position:relative}
+.trm::after{content:"";position:absolute;right:-12px;top:50%;width:12px;border-top:2px solid #d9b66a;opacity:.6}
+.trs{font:700 14px/1.2 inherit;font-family:inherit;text-align:left;padding:8px 10px;border:2px solid #6b5a2e;background:#222227;color:#ece6d4;border-radius:6px;min-height:36px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trs:hover:not(.empty){border-color:#d9b66a;background:#2c2a22}
+.trs.win{background:#d9b66a;color:#1a1608;border-color:#d9b66a}
+.trs.lose{opacity:.45}
+.trs.empty{color:#777;cursor:default;border-style:dashed}
+.trgf{width:190px;display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center}
+.trgf h3{margin:0;color:#d9b66a;font:900 22px/1.05 "Arial Black",sans-serif}
+.trgf .trm::after{display:none}
+.trgf small{font-weight:800;letter-spacing:1px}
+.trchamp{background:#d9b66a;color:#1a1608;border-radius:10px;padding:8px;font-weight:900;font-size:16px}
+.trrank{columns:2;margin:6px 0 0;padding-left:26px}.trrank li{padding:3px 0}
+.trset{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin:8px 0}
+.trset input{width:100%}
+.trs:disabled{cursor:default}.trname{display:flex;gap:4px}.trname input{min-width:0}.trname button{padding:2px 9px;font-size:18px}.trtitle{font-size:clamp(20px,4.5vw,32px)}
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>MonkuGames</h1>
@@ -157,6 +181,7 @@ border:2px dashed var(--bd);border-radius:12px;margin-bottom:12px}
 <section id="net" hidden></section>
 <section id="edit" hidden></section>
 <section id="geo" hidden></section>
+<section id="tr" hidden></section>
 </main>
 <button class="lock" id="lock" onclick="lockClick()" aria-label="Mode admin">🔒</button>
 <div id="modal" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="mt">
@@ -400,6 +425,54 @@ function renderGeo(){geoLock();const el=$('geo'),bar=`<div class="bar"><button o
   el.innerHTML=bar+`<div class="ghead" id="ghead"></div><div class="gmapw"><div class="gvp" id="gvp"><div class="gzc" id="gzc"><img id="gimg" alt="Carte du monde" draggable="false" src="data:image/png;base64,${GEOMAP.png}"><canvas id="gcv" width="${GEOMAP.w*2}" height="${GEOMAP.h*2}"></canvas></div></div><div class="gzoom"><button onclick="gzBy(1.6)" aria-label="Zoomer">+</button><button onclick="gzBy(1/1.6)" aria-label="Dézoomer">−</button><button onclick="gzReset()" aria-label="Vue entière">⤢</button></div></div><div id="gmsg" class="gmsg" aria-live="polite"></div>`;
   gzBind();geoPaint()}
  geoUI()}
+/* ====== Tournoi de tennis de table : élimination double (3 à 16 équipes) ====== */
+const TR_MAX=16,TR_MIN=3,TR_TITLE='Tournoi de tennis de table';let TRB=null,TRC={};
+function trT(){let T=D.tr;if(!T||T.v!==2){const old=T&&T.names&&T.names.length>=TR_MIN?T.names.slice(0,TR_MAX):Array.from({length:8},(_,i)=>'Équipe '+(i+1));T=D.tr={v:2,title:TR_TITLE,names:old,res:{}}}return T}
+function trBuild(N){let S=4;while(S<N)S*=2;const k=Math.log2(S),M=[];let id=0;
+ const add=(b,r,a,c)=>{M.push({id:++id,b,r,s:[a,c]});return id};
+ let o=[0];while(o.length<S){const n=o.length*2;o=o.flatMap(x=>[x,n-1-x])}
+ const ub=[[]];for(let i=0;i<S;i+=2)ub[0].push(add('U',1,'t'+o[i],'t'+o[i+1]));
+ for(let r=2;r<=k;r++){const p=ub[r-2],q=[];for(let i=0;i<p.length;i+=2)q.push(add('U',r,'w'+p[i],'w'+p[i+1]));ub.push(q)}
+ const L=[];let lr=0,cur=[];for(let i=0;i<ub[0].length;i+=2)cur.push(add('L',++lr,'l'+ub[0][i],'l'+ub[0][i+1]));L.push(cur);
+ for(let r=2;r<=k;r++){const d=ub[r-1],nx=[];for(let i=0;i<cur.length;i++)nx.push(add('L',++lr,'w'+cur[i],'l'+d[d.length-1-i]));L.push(nx);cur=nx;
+  if(r<k){const n2=[];for(let i=0;i<cur.length;i+=2)n2.push(add('L',++lr,'w'+cur[i],'w'+cur[i+1]));L.push(n2);cur=n2}}
+ const gf=add('G',1,'w'+ub[k-1][0],'w'+cur[0]);const by={};M.forEach(m=>by[m.id]=m);return{N,S,k,M,ub,L,gf,by}}
+function trB(T){const N=T.names.length;if(!TRB||TRB.N!==N)TRB=trBuild(N);return TRB}
+function trWin(T,m,a,b){if(a===-1&&b===-1)return -1;if(a===-1)return b;if(b===-1)return a;return T.res[m.id]!=null?T.res[m.id]:null}
+function trRef(T,B,s){if(s in TRC)return TRC[s];const k=s[0],n=+s.slice(1);let v;
+ if(k==='t')v=n<T.names.length?n:-1;
+ else{const m=B.by[n],a=trRef(T,B,m.s[0]),b=trRef(T,B,m.s[1]),w=trWin(T,m,a,b);v=k==='w'?w:(a===-1||b===-1)?-1:w==null?null:w===a?b:a}
+ return TRC[s]=v}
+function trClean(T){const B=trB(T);TRC={};B.M.forEach(m=>{const w=T.res[m.id];if(w==null)return;const a=trRef(T,B,m.s[0]),b=trRef(T,B,m.s[1]);if(a==null||b==null||a===-1||b===-1||(w!==a&&w!==b)){delete T.res[m.id];TRC={}}});TRC={}}
+const trName=(T,t)=>t==null||t<0?'—':(T.names[t].trim()||'Équipe '+(t+1));
+function trSave(){TRC={};save();render()}
+function trPick(id,t){const T=trT();if(T.res[id]===t)delete T.res[id];else T.res[id]=t;trClean(T);trSave()}
+function trSetName(i,v){trT().names[i]=v.slice(0,20);trSave()}
+function trSetTitle(v){trT().title=v.slice(0,40);trSave()}
+function trAdd(){const T=trT();if(T.names.length>=TR_MAX)return;T.names.push('Équipe '+(T.names.length+1));T.res={};TRB=null;trSave()}
+function trDel(i){const T=trT();if(T.names.length<=TR_MIN)return;T.names.splice(i,1);T.res={};TRB=null;trSave()}
+function trShuffle(){const T=trT(),a=T.names;for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}T.res={};trSave()}
+function trClear(){trT().res={};trSave()}
+function trFromDeck(){const T=trT(),dk=D.decks.find(d=>d.id===$('trdk').value);if(!dk)return;const n=Math.min(T.names.length,dk.photos.length);if(n<TR_MIN)return;T.names=[...dk.photos].sort(()=>Math.random()-.5).slice(0,n).map(x=>x.name);T.res={};TRB=null;trSave()}
+function trM(T,B,m){const a=trRef(T,B,m.s[0]),b=trRef(T,B,m.s[1]);if(a===-1&&b===-1)return '';const w=trWin(T,m,a,b),auto=a===-1||b===-1;
+ return '<div class="trm">'+[a,b].map(t=>t===-1?'<div class="trs empty">Exempt</div>':t==null?'<div class="trs empty">—</div>':`<button class="trs${w==null?'':w===t?' win':' lose'}"${auto?' disabled':''} onclick="trPick(${m.id},${t})" aria-label="${esc(trName(T,t))}, gagnant du match ${m.id}">${esc(trName(T,t))}</button>`).join('')+'</div>'}
+function trCols(T,B,rounds,lab){return rounds.map((ids,j)=>{const h=ids.map(id=>trM(T,B,B.by[id])).join('');return h?`<div class="trcol"><small>${lab(j,rounds.length)}</small>${h}</div>`:''}).join('')}
+function trRank(T,B){const g=[[trRef(T,B,'w'+B.gf)],[trRef(T,B,'l'+B.gf)]];
+ for(let j=B.L.length-1;j>=0;j--){const ms=B.L[j].map(id=>B.by[id]).filter(m=>trRef(T,B,m.s[0])!==-1&&trRef(T,B,m.s[1])!==-1);if(ms.length)g.push(ms.map(m=>trRef(T,B,'l'+m.id)))}
+ let pos=1;return g.map(x=>{const r={pos,t:x};pos+=x.length;return r})}
+function renderTr(){TRC={};const T=trT(),B=trB(T),el=$('tr'),dks=D.decks.filter(d=>d.photos.length>=TR_MIN),k=B.k;
+ const ul=(j,n)=>j===n-1?'Finale':j===n-2?'Demies':j===n-3?'Quarts':'Tour '+(j+1),ll=(j,n)=>j===n-1?'Finale':'Tour '+(j+1);
+ const cols=Math.max(k,B.L.length),ch=T.res[B.gf]!=null?T.res[B.gf]:null;
+ el.innerHTML=`<div class="bar"><button onclick="go('hub')">← MonkuGames</button><b>Tournoi</b></div>
+<div class="box"><h2>Les équipes (${T.names.length})</h2><p class="hint">Entre ${TR_MIN} à ${TR_MAX} équipes. Ajouter ou retirer une équipe reconstruit le tableau et efface les résultats. Dans le tableau, touche le gagnant de chaque match : il avance, le perdant descend dans le tableau du bas. Retouche pour annuler.</p>
+<label for="trt"><b>Titre</b></label> <input id="trt" type="text" maxlength="40" value="${esc(T.title)}" onchange="trSetTitle(this.value)">
+<div class="trset">${T.names.map((n,i)=>`<div class="trname"><input type="text" maxlength="20" value="${esc(n)}" aria-label="Équipe ${i+1}" onchange="trSetName(${i},this.value)"><button class="ib" onclick="trDel(${i})" aria-label="Retirer ${esc(trName(T,i))}" ${T.names.length<=TR_MIN?'disabled':''}>×</button></div>`).join('')}</div>
+<div class="bar"><button class="go" onclick="trAdd()" ${T.names.length>=TR_MAX?'disabled':''}>＋ Ajouter une équipe</button><button onclick="trShuffle()">🔀 Mélanger</button><button onclick="trClear()">Effacer les résultats</button>${dks.length?`<select id="trdk" aria-label="Qui est-ce ?">${dks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}</select><button onclick="trFromDeck()">Prendre des noms de ce jeu</button>`:''}</div></div>
+<div class="trwrap"><h2 class="trtitle">${esc(T.title)}</h2><div class="trb" style="min-width:${cols*172+230}px"><div class="trl">
+<div><div class="trlab">Tableau des gagnants</div><div class="trrow">${trCols(T,B,B.ub,ul)}</div></div>
+<div><div class="trlab">Tableau des perdants</div><div class="trrow">${trCols(T,B,B.L,ll)}</div></div></div>
+<div class="trgf"><h3>GRANDE<br>FINALE</h3>${trM(T,B,B.by[B.gf])}<small>BO5</small>${ch!=null?`<div class="trchamp">🏆 ${esc(trName(T,ch))}</div>`:''}</div></div></div>
+<div class="box" style="margin-top:14px"><h2>Classement</h2><ol class="trrank">${trRank(T,B).map(r=>`<li><b>${r.pos===1?'1er':r.pos+'e'}${r.t.length>1?' (ex æquo)':''}</b> : ${esc(r.t.map(t=>trName(T,t)).join(', '))}</li>`).join('')}</ol></div>`}
 /* ====== Admin (gestion des Qui est-ce ?) ====== */
 function shrink(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=240,c=document.createElement('canvas'),m=Math.min(i.width,i.height);c.width=c.height=s;c.getContext('2d').drawImage(i,(i.width-m)/2,(i.height-m)/2,m,m,0,0,s,s);res(c.toDataURL('image/jpeg',.8))};i.onerror=()=>res(null);i.src=r.result};r.readAsDataURL(file)})}
 function addDeck(){const n=$('nn').value.trim()||'Jeu '+(D.decks.length+1);const id=uid();D.decks.push({id,name:n.slice(0,24),photos:[]});D.cur=id;save();render()}
@@ -421,12 +494,12 @@ function render(){
  const ae=document.activeElement,fid=ae&&ae.id,pos=ae&&ae.selectionStart;
  const inGame=view==='net'||(view==='geo'&&(GEO.phase==='play'||GEO.phase==='reveal'));$('adm').hidden=!admin||inGame;$('lock').hidden=inGame;$('th').className=view!=='edit'?'on':'';$('th').onclick=()=>go(NET?'net':'hub');$('te').className=view==='edit'?'on':'';
  $('lock').textContent=admin?'🔓':'🔒';$('lock').setAttribute('aria-label',admin?'Quitter le mode admin':'Mode admin');
- ['hub','mode','jform','net','edit','geo'].forEach(v=>$(v).hidden=view!==v);
- ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit,geo:renderGeo})[view]();
+ ['hub','mode','jform','net','edit','geo','tr'].forEach(v=>$(v).hidden=view!==v);
+ ({hub:renderHub,mode:renderMode,jform:renderJform,net:renderNet,edit:renderEdit,geo:renderGeo,tr:renderTr})[view]();
  if(fid&&fid!=='lock'&&$(fid)&&$(fid).focus&&view!=='edit'){$(fid).focus();try{$(fid).setSelectionRange(pos,pos)}catch(e){}}
 }
 function renderHub(){
- $('hub').innerHTML='<h2>À quoi on joue ?</h2><div class="grid menu">'+Object.entries(GAMES).map(([k,g])=>`<button class="c" onclick="pickGame('${k}')"><div class="q" style="background:${g.bg}">${g.icon}</div><span>${esc(g.name)}</span><small>${esc(g.sub)}</small></button>`).join('')+`<button class="c" onclick="GEO.phase='start';GEO.err='';go('geo')"><div class="q" style="background:#1fa463">🌍</div><span>Devine le pays</span><small>Solo · ${GEO_N} manches</small></button>`+'</div>';
+ $('hub').innerHTML='<h2>À quoi on joue ?</h2><div class="grid menu">'+Object.entries(GAMES).map(([k,g])=>`<button class="c" onclick="pickGame('${k}')"><div class="q" style="background:${g.bg}">${g.icon}</div><span>${esc(g.name)}</span><small>${esc(g.sub)}</small></button>`).join('')+`<button class="c" onclick="GEO.phase='start';GEO.err='';go('geo')"><div class="q" style="background:#1fa463">🌍</div><span>Devine le pays</span><small>Solo · ${GEO_N} manches</small></button>`+`<button class="c" onclick="go('tr')"><div class="q" style="background:#b8923a">🏆</div><span>Tournoi</span><small>Solo · 3 à 16 équipes</small></button>`+'</div>';
 }
 function renderMode(){const G=GAMES[gid];
  $('mode').innerHTML=`<div class="bar"><button onclick="go('hub')">← MonkuGames</button></div><h2>${esc(G.name)}</h2><div class="grid menu"><button class="c" onclick="hostGo()"><div class="q">🏠</div><span>Héberger</span><small>Crée une partie et reçois un code</small></button><button class="c" onclick="go('jform')"><div class="q" style="background:var(--ac)">🔑</div><span>Rejoindre</span><small>Entre le code de l’hôte</small></button></div>`;
