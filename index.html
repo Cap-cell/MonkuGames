@@ -453,21 +453,20 @@ function trAdd(){const T=trT();if(T.names.length>=TR_MAX)return;T.names.push('É
 function trDel(i){const T=trT();if(T.names.length<=TR_MIN)return;T.names.splice(i,1);T.res={};TRB=null;trSave()}
 function trShuffle(){const T=trT(),a=T.names;for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}T.res={};trSave()}
 function trClear(){trT().res={};trSave()}
-function trFromDeck(){const T=trT(),dk=D.decks.find(d=>d.id===$('trdk').value);if(!dk)return;const n=Math.min(T.names.length,dk.photos.length);if(n<TR_MIN)return;T.names=[...dk.photos].sort(()=>Math.random()-.5).slice(0,n).map(x=>x.name);T.res={};TRB=null;trSave()}
 function trM(T,B,m){const a=trRef(T,B,m.s[0]),b=trRef(T,B,m.s[1]);if(a===-1&&b===-1)return '';const w=trWin(T,m,a,b),auto=a===-1||b===-1;
  return '<div class="trm">'+[a,b].map(t=>t===-1?'<div class="trs empty">Exempt</div>':t==null?'<div class="trs empty">—</div>':`<button class="trs${w==null?'':w===t?' win':' lose'}"${auto?' disabled':''} onclick="trPick(${m.id},${t})" aria-label="${esc(trName(T,t))}, gagnant du match ${m.id}">${esc(trName(T,t))}</button>`).join('')+'</div>'}
 function trCols(T,B,rounds,lab){return rounds.map((ids,j)=>{const h=ids.map(id=>trM(T,B,B.by[id])).join('');return h?`<div class="trcol"><small>${lab(j,rounds.length)}</small>${h}</div>`:''}).join('')}
 function trRank(T,B){const g=[[trRef(T,B,'w'+B.gf)],[trRef(T,B,'l'+B.gf)]];
  for(let j=B.L.length-1;j>=0;j--){const ms=B.L[j].map(id=>B.by[id]).filter(m=>trRef(T,B,m.s[0])!==-1&&trRef(T,B,m.s[1])!==-1);if(ms.length)g.push(ms.map(m=>trRef(T,B,'l'+m.id)))}
  let pos=1;return g.map(x=>{const r={pos,t:x};pos+=x.length;return r})}
-function renderTr(){TRC={};const T=trT(),B=trB(T),el=$('tr'),dks=D.decks.filter(d=>d.photos.length>=TR_MIN),k=B.k;
+function renderTr(){TRC={};const T=trT(),B=trB(T),el=$('tr'),k=B.k;
  const ul=(j,n)=>j===n-1?'Finale':j===n-2?'Demies':j===n-3?'Quarts':'Tour '+(j+1),ll=(j,n)=>j===n-1?'Finale':'Tour '+(j+1);
  const cols=Math.max(k,B.L.length),ch=T.res[B.gf]!=null?T.res[B.gf]:null;
  el.innerHTML=`<div class="bar"><button onclick="go('hub')">← MonkuGames</button><b>Tournoi</b></div>
 <div class="box"><h2>Les équipes (${T.names.length})</h2><p class="hint">Entre ${TR_MIN} à ${TR_MAX} équipes. Ajouter ou retirer une équipe reconstruit le tableau et efface les résultats. Dans le tableau, touche le gagnant de chaque match : il avance, le perdant descend dans le tableau du bas. Retouche pour annuler.</p>
 <label for="trt"><b>Titre</b></label> <input id="trt" type="text" maxlength="40" value="${esc(T.title)}" onchange="trSetTitle(this.value)">
 <div class="trset">${T.names.map((n,i)=>`<div class="trname"><input type="text" maxlength="20" value="${esc(n)}" aria-label="Équipe ${i+1}" onchange="trSetName(${i},this.value)"><button class="ib" onclick="trDel(${i})" aria-label="Retirer ${esc(trName(T,i))}" ${T.names.length<=TR_MIN?'disabled':''}>×</button></div>`).join('')}</div>
-<div class="bar"><button class="go" onclick="trAdd()" ${T.names.length>=TR_MAX?'disabled':''}>＋ Ajouter une équipe</button><button onclick="trShuffle()">🔀 Mélanger</button><button onclick="trClear()">Effacer les résultats</button>${dks.length?`<select id="trdk" aria-label="Qui est-ce ?">${dks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}</select><button onclick="trFromDeck()">Prendre des noms de ce jeu</button>`:''}</div></div>
+<div class="bar"><button class="go" onclick="trAdd()" ${T.names.length>=TR_MAX?'disabled':''}>＋ Ajouter une équipe</button><button onclick="trShuffle()">🔀 Mélanger</button><button onclick="trClear()">Effacer les résultats</button></div></div>
 <div class="trwrap"><h2 class="trtitle">${esc(T.title)}</h2><div class="trb" style="min-width:${cols*172+230}px"><div class="trl">
 <div><div class="trlab">Tableau des gagnants</div><div class="trrow">${trCols(T,B,B.ub,ul)}</div></div>
 <div><div class="trlab">Tableau des perdants</div><div class="trrow">${trCols(T,B,B.L,ll)}</div></div></div>
